@@ -78,6 +78,10 @@ public class Main {
         }
     }
 
+    public static void gestionaMenuLlibres(Scanner scanner) {
+        ArrayList<String> menuLlibres = menuLlibres();
+    }
+
     public static void main(String[] args) {
         System.out.println("Hello world!");
     }
