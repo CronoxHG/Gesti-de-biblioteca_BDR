@@ -1,0 +1,21 @@
+[
+    {
+      "Id": 1,
+      "Nom": "Anna",
+      "Cognoms": "Garcia Pérez",
+      "Telèfon": "666123456"
+    },
+    {
+      "Id": 2,
+      "Nom": "Joan",
+      "Cognoms": "Martínez López",
+      "Telèfon": "667987654"
+    },
+    {
+      "Id": 3,
+      "Nom": "Laura",
+      "Cognoms": "Sánchez Ruiz",
+      "Telèfon": "668456789"
+    }
+  ]
+  
