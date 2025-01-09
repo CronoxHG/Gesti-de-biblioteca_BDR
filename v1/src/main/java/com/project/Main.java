@@ -1,7 +1,12 @@
 package com.project;
 
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import org.json.*;
+
 public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello world!");
-    }
+    String filePathUsuaris = "./data/usuaris.json";
+
+    List<Map<String, 
 }
