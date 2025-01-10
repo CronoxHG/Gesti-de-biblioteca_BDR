@@ -1,5 +1,4 @@
 package com.project;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -11,6 +10,86 @@ public class Main {
         for (String linia : llista) {
             System.out.println(linia);
         }
+    }
+
+    
+
+    public static String ficarLlibreNou(int idLlibre, String nomLlibre, String nomAutor) {
+        String idLlibre = jsonObject.
+    }
+
+    public static boolean validarNomLlibre(String nomLlibre) {
+        if (nomLlibre == null || nomLlibre.trim().isEmpty()) {
+            System.out.println("El nom del llibre no pot estar buit");
+            return false;
+        }
+
+        if (nomLlibre.trim().length() < 3) {
+            System.out.println("El nom del llibre ha de tenir almenys 3 caràcters");
+            return false;
+        }
+
+        if (!nomLlibre.matches("[a-zA-ZÀ-ÿ0-9 .,'-]+")) {
+            System.out.println("El nom del llibre conté caràcters no vàlids");
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean validarNomAutor (String nomAutor) {
+        if (nomAutor == null || nomAutor.trim().isEmpty()) {
+            System.out.println("El nom de l'autor no pot estar buit");
+            return false;
+        }
+
+        if (nomAutor.trim().length() < 2) {
+            System.out.println("El nom de l'autor ha de tenir almenys 2 caràcters");
+            return false;
+        }
+
+        if (!nomAutor.matches("[a-zA-ZÀ-ÿ .'-]+")) {
+            System.out.println("El nom de l'autor conté caràcters no vàlids");
+            return false;
+        }
+
+        return true;
+    }
+
+    public static String llegirNomLlibre(Scanner scanner) {
+        System.out.print("Introdueix el nom del llibre: ");
+        String nomLlibre = scanner.nextLine();
+
+        while (!validarNomLlibre(nomLlibre)) {
+            System.out.println("Nom no vàlid. Només s'accepten lletres i espais");
+            System.out.print("Introdueix el nom del llibre: ");
+            nomLlibre = scanner.nextLine();
+        }
+
+        return nomLlibre;
+    }
+
+    public static String llegirNomAutor(Scanner scanner) {
+        System.out.print("Introdueix el nom de l'autor del llibre: ");
+        String nomAutor = scanner.nextLine();
+
+        while (!validarNomAutor(nomAutor)) {
+            System.out.println("Nom no vàlid. Només s'accepten lletres i espais");
+            System.out.print("Introdueix el nom de l'autor del llibre: ");
+            nomAutor = scanner.nextLine();
+        }
+        
+        return nomAutor;
+    }
+
+    public static String afegirLlibre(Scanner scanner) {
+
+        System.out.println("=== Afegir Llibre ===");
+
+        String nomLlibre = llegirNomLlibre(scanner);
+        String nomAutor = llegirNomAutor(scanner);
+
+
     }
 
     public static ArrayList<String> menuLlibres() {
@@ -63,7 +142,6 @@ public class Main {
         }
     }
     
-
     public static String obtenerOpcionLlistar(Scanner scanner) {
         ArrayList<String> menu = menuLlistarLlibres();
 
