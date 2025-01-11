@@ -4,7 +4,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-import javax.management.RuntimeErrorException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -71,38 +70,61 @@ public class Main {
                 return;
             }
         }
+
+        //agafat la informació de l'arxiu llibres.json
+        String filePathLlibres = "./data/llibres.json";
+        String contentLlibres = new String(Files.readAllBytes(Paths.get(filePathLlibres)));
+        JSONArray llibres = new JSONArray(contentLlibres);
+        //agafat la informació de l'arxiu usuaris.json
+        String filePathUsuari = "./data/llibres.json";
+        String contentUsuari = new String(Files.readAllBytes(Paths.get(filePathLlibres)));
+        JSONArray usuaris = new JSONArray(contentLlibres);
+
+        for (int i = 0; i<llibres.length();i++){
+            JSONObject llibre = llibres.getJSONObject(i);
+            JSONObject usuari = usuaris.getJSONObject(i);
+            if (llibre.getInt("Id") == idLlibreInteger && usuari.getInt("Id") == idUsuariInteger){
+                //existeix dintre del fitxer de llibres.
+                //buscar si realmente es correcto. En el caso que sea correcto solo quedaría meter la información dentro y verificar las fechas.
+            }
+        }
+
+
     }
 
-    // verificar que existeixin el llibre i l'usuari.
 
-    public static String gestio_prestecs() {
+
+    // verificar que existeixin el llibre i l'usuari.
+    public static void gestio_prestecs() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Escull una opció: ");
         String opc = scanner.nextLine();
-        switch (opc) {
-            case 1:
-            case opc.equalIgnoreCase("afegir"):
-                // afegir
+        switch (opc.toLowerCase()) {
+            case "1":
+            case "afegir":
+                afegir_prestec();
                 break;
-            case 2:
-            case opc.equalsIgnoreCase("modificar"):
+            case "2":
+            case "modificar":
                 // modificar
                 break;
-            case 3:
-            case opc.equalsIgnoreCase("eliminar"):
+            case "3":
+            case "eliminar":
                 // eliminar
                 break;
-            case 4:
-            case opc.equalsIgnoreCase("llistar"):
+            case "4":
+            case "llistar":
                 // eliminar
                 break;
-            case 0:
-            case opc.equalsIgnoreCase("sortir"):
+            case "0":
+            case "sortir":
                 // eliminar
                 break;
             default:
-
+                System.out.println("Opció invalida.");
+                break;
         }
+        scanner.close();
     }
 
     public static void main(String[] args) {
