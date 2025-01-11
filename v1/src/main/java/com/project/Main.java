@@ -9,6 +9,117 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Main {
+    public static boolean digit(String num){
+        for (char numSeparat : num.toCharArray()){
+            if (!Character.isDigit(numSeparat)){
+                return false;
+            }
+        }
+        return true;
+    }
+    public static boolean dataValida(String data){
+        String[] dataStringArray = data.split("-");
+        //mirar de que tots els elements de l'array siguin numeros sencers.
+        if (dataStringArray.length!=3){ //comprobar que la longitut del array que conté la data es correcte.
+            return false;
+        }
+        for (String num : dataStringArray){
+            if (!digit(num)){
+                return false;
+            }
+        }
+        boolean esBisiesto = true;
+        Integer any = Integer.parseInt(dataStringArray[0]);
+        Integer mes = Integer.parseInt(dataStringArray[1]);
+        Integer dia = Integer.parseInt(dataStringArray[2]);
+        if (any % 4 == 0) {
+            if (any % 100 == 0) {
+                if (any % 400 == 0) {
+                    esBisiesto = true;
+                } else {// no es bisiesto
+                    esBisiesto = false;
+                }
+            } else {
+                esBisiesto = true;
+            }
+
+        } else { // no es bisiesto
+            esBisiesto = false;
+        }
+
+        if (("0"+mes).equals("02") && dia > 29) {
+            return false;
+        }
+
+        if (!(esBisiesto) && ("0"+mes).equals("02") && dia > 28) {
+            return false;
+        }
+        if (mes < 1 || mes > 12) {
+            return false;
+        }
+        if (dia < 1) {
+            return false;
+        }
+
+        switch (mes) {
+            case 1: {
+                if (dia > 31) {
+                    return false;
+                }
+            }
+            case 3: {
+                if (dia > 31) {
+                    return false;
+                }
+            }
+            case 4: {
+                if (dia > 30) {
+                    return false;
+                }
+            }
+            case 5: {
+                if (dia > 31) {
+                    return false;
+                }
+            }
+            case 6: {
+                if (dia > 30) {
+                    return false;
+                }
+            }
+            case 7: {
+                if (dia > 31) {
+                    return false;
+                }
+            }
+            case 8: {
+                if (dia > 31) {
+                    return false;
+                }
+            }
+            case 9: {
+                if (dia > 30) {
+                    return false;
+                }
+            }
+            case 10: {
+                if (dia > 31) {
+                    return false;
+                }
+            }
+            case 11: {
+                if (dia > 30) {
+                    return false;
+                }
+            }
+            case 12: {
+                if (dia > 31) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     public static void afegir_prestec() {
         Scanner scanner = new Scanner(System.in);
         String filePath = "./data/prestecs.json";
@@ -76,20 +187,34 @@ public class Main {
         String contentLlibres = new String(Files.readAllBytes(Paths.get(filePathLlibres)));
         JSONArray llibres = new JSONArray(contentLlibres);
         //agafat la informació de l'arxiu usuaris.json
-        String filePathUsuari = "./data/llibres.json";
+        String filePathUsuari = "./data/usuaris.json";
         String contentUsuari = new String(Files.readAllBytes(Paths.get(filePathLlibres)));
         JSONArray usuaris = new JSONArray(contentLlibres);
-
+    
         for (int i = 0; i<llibres.length();i++){
             JSONObject llibre = llibres.getJSONObject(i);
-            JSONObject usuari = usuaris.getJSONObject(i);
-            if (llibre.getInt("Id") == idLlibreInteger && usuari.getInt("Id") == idUsuariInteger){
-                //existeix dintre del fitxer de llibres.
-                //buscar si realmente es correcto. En el caso que sea correcto solo quedaría meter la información dentro y verificar las fechas.
+            if (!(llibre.getInt("Id") == idLlibreInteger)){
+                return;
+            }
+        }
+        for (int j = 0;j<usuaris.length();j++){
+            JSONObject usuari = usuaris.getJSONObject(j);
+            if (!(usuari.getInt("Id") == idUsuariInteger)){
+                return;
             }
         }
 
-
+        System.out.print("Inserta la data de prèstec: ");
+        String data = scanner.nextLine();
+        if (!dataValida(data)){
+            return;
+        }
+        String[] dataStringArray = data.split("-");
+        Integer any = Integer.parseInt(dataStringArray[0]);
+        Integer mes = Integer.parseInt(dataStringArray[1]);
+        Integer dia = Integer.parseInt(dataStringArray[2]);
+        String dataInsertar = (String.format("%04d-%02d-%02d",any,mes,dia));
+        
     }
 
 
@@ -118,7 +243,7 @@ public class Main {
                 break;
             case "0":
             case "sortir":
-                // eliminar
+                // sortir
                 break;
             default:
                 System.out.println("Opció invalida.");
