@@ -2,22 +2,87 @@ package com.project;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Main {
 
+    public static final JSONArray llibres;
+    // Inicialización del JSONArray
+    static {
+        JSONArray tempLlibres = new JSONArray();
+        try {
+            // Leer el contenido del archivo JSON
+            String filePath = "./data/llibres.json";
+            String content = new String(Files.readAllBytes(Paths.get(filePath)));
+            tempLlibres = new JSONArray(content);
+        } catch (IOException e) {
+            System.out.println("No s'ha pogut llegir el fitxer de llibres. Inicialitzant amb un JSONArray buit.");
+        }
+        llibres = tempLlibres; // Asignar el JSONArray leído o vacío
+    }
+    
     public static void dibuixarLlista(ArrayList<String> llista) {
         for (String linia : llista) {
             System.out.println(linia);
         }
     }
 
-    
-
     public static String ficarLlibreNou(int idLlibre, String nomLlibre, String nomAutor) {
-        String idLlibre = jsonObject.
+        String filePath = "./data/llibres.json";
+        // Afegir el llibre dintre del fitxer json
+        JSONObject nouLlibre = new JSONObject();
+    
+        nouLlibre.put("Id", idLlibre + 1); // Utilitzar idLlibre directament
+        nouLlibre.put("Titol", nomLlibre); // Corregit el nom del camp
+        nouLlibre.put("Autor", nomAutor);
+    
+        llibres.put(nouLlibre);
+    
+        String textoJson = llibres.toString(4);
+        try {
+            Files.write(Paths.get(filePath), textoJson.getBytes());
+            System.out.println("Llibre afegit correctament.");
+            return "Llibre afegit correctament.";
+        } catch (IOException e) {
+            System.out.println("Ha sorgit un error inesperat en escriure el fitxer.");
+            return "Error escrivint el fitxer.";
+        }
     }
-
+    
+    public static String modificarLlibre(String idLlibre, String camp, Object nouValor) {
+        // Verificar si el ID del libro existe
+        boolean idExisteix = false;
+        JSONObject llibreSeleccionat = null;
+    
+        for (int i = 0; i < llibres.length(); i++) {
+            JSONObject llibre = llibres.getJSONObject(i);
+            if (llibre.getString("Id").equals(idLlibre)) { // Comparación correcta con equals()
+                idExisteix = true;
+                llibreSeleccionat = llibre; // Guardar referencia al libro
+                break;
+            }
+        }
+    
+        // Si el ID no existe, devolver un mensaje de error
+        if (!idExisteix) {
+            return "Error: No s'ha trobat cap llibre amb l'ID especificat.";
+        }
+        // Verificar si el campo a modificar existe en el libro
+        if (!llibreSeleccionat.has(camp)) { // Usar el método has() para verificar la existencia del campo
+            return "Error: El camp '" + camp + "' no existeix en el llibre.";
+        }
+    
+        // Modificar el campo del libro
+        llibreSeleccionat.put(camp, nouValor);
+        // Retornar confirmación
+        return "OK";
+    }
+    
     public static boolean validarNomLlibre(String nomLlibre) {
         if (nomLlibre == null || nomLlibre.trim().isEmpty()) {
             System.out.println("El nom del llibre no pot estar buit");
@@ -83,13 +148,79 @@ public class Main {
     }
 
     public static String afegirLlibre(Scanner scanner) {
-
         System.out.println("=== Afegir Llibre ===");
-
+        // Llegir el nom del llibre
         String nomLlibre = llegirNomLlibre(scanner);
+        // Llegir el nom de l'autor
         String nomAutor = llegirNomAutor(scanner);
+        try {
+            // Afegir el llibre utilitzant ficarLlibreNou
+            String resultat = ficarLlibreNou(0, nomLlibre, nomAutor);
+            if (resultat != null && resultat.contains("Error")) {
+                return resultat; // Retornar el missatge d'error de ficarLlibreNou
+            }
+            return "S'ha afegit correctament el llibre \"" + nomLlibre + "\".";
+        } catch (Exception e) {
+            return "Ha sorgit un error inesperat al afegir el llibre: " + e.getMessage();
+        }
+    }
+    
+    public static ArrayList<String> modificarLlibreMenu (Scanner scanner) {
+        ArrayList<String> linies = new ArrayList<>();
+        linies.add("=== Modificar Client ===");
 
+        System.out.print("Introdueix l'ID del llibre a modificar: ");
+        String idLlibre = scanner.nextLine().trim();
 
+        boolean idExisteix = false;
+        for (int i = 0; i < llibres.length(); i++) {
+            JSONObject llibre = llibres.getJSONObject(i);
+            if (llibre.getString("Id") == idLlibre) {
+                idExisteix = true;
+                break;
+            }
+        }
+        if (!idExisteix) {
+            linies.add("El llibre amb clau " + idLlibre + " no existeix.");
+            return linies;
+        }
+
+        System.out.println("Camps disponibles per modificar: Titol i Autor");
+        System.out.print("Introdueix el camp que vols modificar: ");
+        String camp = scanner.nextLine().trim();
+
+        boolean campExisteix = false;
+        for (int i = 0; i < llibres.length(); i++) {
+            JSONObject llibre = llibres.getJSONObject(i);
+            if (llibre.getString("Titol") == camp || llibre.getString("Autor") == camp) {
+                campExisteix = true;
+                break;
+            }
+        }
+
+        if (!campExisteix) {
+            linies.add("El camp " + camp + " no és vàlid");
+        }
+
+        Object nouValor = switch (camp) {
+            case "Titol" -> llegirNomLlibre(scanner);
+            case "Autor" -> llegirNomAutor(scanner);
+            default -> null;
+        };
+
+        if (nouValor == null) {
+            return linies;
+        }
+
+        String resultat = modificarLlibre(idLlibre, camp, nouValor);
+
+        if (!resultat.equals("OK")) {
+            linies.add(resultat);
+        } else {
+            System.out.println("S'ha modificat el client " + idLlibre + ".");
+        }
+
+        return linies;
     }
 
     public static ArrayList<String> menuLlibres() {
@@ -194,8 +325,8 @@ public class Main {
         }
     }
     
-    
     public static void gestionaMenuLlistarLlibres(Scanner scanner) {
+        
         ArrayList<String> menuLlistarLlibres = menuLlistarLlibres();
 
         while (true) {
