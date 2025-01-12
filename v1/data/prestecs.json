@@ -1,24 +1,24 @@
 [
     {
-      "Id": 1,
-      "IdLlibre": 2,
-      "IdUsuari": 1,
-      "DataPrestec": "2025-01-01",
-      "DataDevolucio": "2025-01-08"
+      "id": 1,
+      "idLlibre": 2,
+      "idUsuari": 1,
+      "dataPrestec": "2025-01-01",
+      "dataDevolucio": "2025-01-08"
     },
     {
-      "Id": 2,
-      "IdLlibre": 3,
-      "IdUsuari": 2,
-      "DataPrestec": "2025-01-03",
-      "DataDevolucio": "2025-01-10"
+      "id": 2,
+      "idLlibre": 3,
+      "idUsuari": 2,
+      "dataPrestec": "2025-01-03",
+      "dataDevolucio": "2025-01-10"
     },
     {
-      "Id": 3,
-      "IdLlibre": 1,
-      "IdUsuari": 3,
-      "DataPrestec": "2025-01-05",
-      "DataDevolucio": "2025-01-12"
+      "id": 3,
+      "idLlibre": 1,
+      "idUsuari": 3,
+      "dataPrestec": "2025-01-05",
+      "dataDevolucio": "2025-01-12"
     }
   ]
   

@@ -1,21 +1,20 @@
 [
     {
-      "Id": 1,
-      "Nom": "Anna",
-      "Cognoms": "Garcia Pérez",
-      "Telèfon": "666123456"
+      "id": 1,
+      "nom": "Anna",
+      "cognoms": "Garcia Pérez",
+      "telefon": "666123456"
     },
     {
-      "Id": 2,
-      "Nom": "Joan",
-      "Cognoms": "Martínez López",
-      "Telèfon": "667987654"
+      "id": 2,
+      "nom": "Joan",
+      "cognoms": "Martínez López",
+      "telefon": "667987654"
     },
     {
-      "Id": 3,
-      "Nom": "Laura",
-      "Cognoms": "Sánchez Ruiz",
-      "Telèfon": "668456789"
+      "id": 3,
+      "nom": "Laura",
+      "cognoms": "Sánchez Ruiz",
+      "telefon": "668456789"
     }
   ]
-  
