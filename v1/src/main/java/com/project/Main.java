@@ -82,7 +82,21 @@ public class Main {
         // Retornar confirmación
         return "OK";
     }
+
+    public static String esborrarLlibre(String idLlibre) {
+        // Verificar si el ID del libro existe y eliminarlo
+        for (int i = 0; i < llibres.length(); i++) {
+            JSONObject llibre = llibres.getJSONObject(i);
+            if (llibre.getString("Id").equals(idLlibre)) { // Comparar correctamente con equals()
+                llibres.remove(i); // Eliminar el libro del JSONArray usando el índice
+                return "OK";
+            }
+        }
     
+        // Si no se encuentra el libro, devolver mensaje de error
+        return "Error: No s'ha trobat cap llibre amb l'ID especificat.";
+    }
+        
     public static boolean validarNomLlibre(String nomLlibre) {
         if (nomLlibre == null || nomLlibre.trim().isEmpty()) {
             System.out.println("El nom del llibre no pot estar buit");
@@ -326,7 +340,7 @@ public class Main {
     }
     
     public static void gestionaMenuLlistarLlibres(Scanner scanner) {
-        
+
         ArrayList<String> menuLlistarLlibres = menuLlistarLlibres();
 
         while (true) {
