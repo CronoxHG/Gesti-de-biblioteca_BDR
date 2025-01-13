@@ -11,6 +11,19 @@ import org.json.JSONObject;
 
 public class Main {
 
+    public static void clearScreen() {
+        try {
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static JSONArray llibres;
     // Inicialización del JSONArray
     static {
@@ -83,7 +96,7 @@ public class Main {
                 }
             }
         }
-        return "Error: No s'ha trobat cap llibre amb l'ID especificat.";
+        return "Error: L'ID '" + idLlibre + "' no existeix.";
     }
 
     public static String esborrarLlibre(int idLlibre) {
@@ -94,7 +107,7 @@ public class Main {
                 return guardarLlibres("./data/llibres.json");
             }
         }
-        return "Error: No s'ha trobat cap llibre amb l'ID especificat.";
+        return "Error: L'ID '" + idLlibre + "' no existeix.";
     }
         
     public static boolean validarNomLlibre(String nomLlibre) {
@@ -187,7 +200,7 @@ public class Main {
         }
         // Si no se encuentra el libro, mostrar mensaje y salir
         if (llibreSeleccionat == null) {
-            System.out.println("El llibre amb ID '" + idLlibre + "' no existeix.");
+            System.out.println("Error: L'ID '" + idLlibre + "' no existeix.");
             return;
         }
     
@@ -229,7 +242,7 @@ public class Main {
             }
         }
         if (!idExisteix) {
-            System.out.println("El llibre amb ID '" + idLlibre + "' no existeix.");
+            System.out.println("Error: L'ID '" + idLlibre + "' no existeix.");
             return;
         }
         scanner.nextLine();
@@ -266,6 +279,8 @@ public class Main {
             System.out.println(fila);
             System.out.println(separador);
         }
+        Scanner scanner = new Scanner(System.in);
+        scanner.nextLine();
     }
     
     public static ArrayList<String> menuLlibres() {
@@ -346,6 +361,7 @@ public class Main {
         ArrayList<String> menuLlibres = menuLlibres();
     
         while (true) {
+            clearScreen();
             dibuixarLlista(menuLlibres);
     
             String opcio = obtenerOpcion(scanner);
@@ -375,6 +391,7 @@ public class Main {
         ArrayList<String> menuLlistarLlibres = menuLlistarLlibres();
 
         while (true) {
+            clearScreen();
             dibuixarLlista(menuLlistarLlibres);
 
             String opcio = obtenerOpcionLlistar(scanner);

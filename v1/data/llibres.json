@@ -13,5 +13,10 @@
         "Autor": ["Gabriel García Márquez"],
         "Id": 3,
         "Titol": "Cien años de soledad"
+    },
+    {
+        "Autor": ["Paco Jimenez"],
+        "Id": 4,
+        "Titol": "Mazinger Z"
     }
 ]
