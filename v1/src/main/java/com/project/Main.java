@@ -387,19 +387,11 @@ public class Main {
             System.out.println("L'id del préstec ha de ser un número");
             return;
         }
-        // mirar limite de prestec.
-       
 
         for (int i = 0; i < prestecs.length(); i++) {
             JSONObject prestec = prestecs.getJSONObject(i);
 
-            if (Integer.parseInt(idPrestec) == prestec.getInt("id")) { //
-                //
-                // }
-
-                // if (Integer.parseInt(idLlibre) == llibre.getInt("id")){
-                // elLlibreExisteix = true;
-
+            if (Integer.parseInt(idPrestec) == prestec.getInt("id")) {
                 System.out.print("Camp a modificar (Llibre/Data devolució): ");
                 String opc = scanner.nextLine();
                 switch (opc.toLowerCase().trim()) {
@@ -420,7 +412,7 @@ public class Main {
                             }
                         }
                         for (int k = 0; k < prestecs.length(); k++) {
-                            if (prestec.getInt("idLlibre") == Integer.parseInt(idLlibre)) {
+                            if (prestecs.getJSONObject(k).getInt("idLlibre") == Integer.parseInt(idLlibre)) {
                                 System.out.println("El llibre ja està en préstec.");
                                 return;
                             }
@@ -449,10 +441,6 @@ public class Main {
 
             }
 
-        }
-
-        if (!elLlibreExisteix) {
-            
         }
 
         // modificar libro
