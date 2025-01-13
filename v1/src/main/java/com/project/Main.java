@@ -50,16 +50,23 @@ public class Main {
 
     public static String ficarLlibreNou(int idLlibre, String nomLlibre, String nomAutor) {
         String filePath = "./data/llibres.json";
-        // Afegir el llibre dintre del fitxer json
+        // Crear el nou llibre
         JSONObject nouLlibre = new JSONObject();
         int nouId = calcularNouId();
     
+        // Construir el JSONArray per al camp "Autor"
+        JSONArray autorsArray = new JSONArray();
+        autorsArray.put(nomAutor); // Afegir el nom de l'autor com un element del array
+    
+        // Configurar els valors del llibre nou
         nouLlibre.put("Id", nouId);
         nouLlibre.put("Titol", nomLlibre);
-        nouLlibre.put("Autor", nomAutor);
+        nouLlibre.put("Autor", autorsArray); // Afegir l'array d'autors
     
+        // Afegir el llibre a la llista de llibres
         llibres.put(nouLlibre);
     
+        // Guardar els llibres actualitzats al fitxer
         String resultat = guardarLlibres(filePath);
         return resultat.startsWith("Error") ? resultat : "Llibre afegit correctament.";
     }
@@ -156,9 +163,7 @@ public class Main {
 
     public static void afegirLlibre(Scanner scanner) {
         System.out.println("=== Afegir Llibre ===");
-        System.out.print("Títol del llibre: ");
         String nomLlibre = llegirNomLlibre(scanner);
-        System.out.print("Autor: ");
         String nomAutor = llegirNomAutor(scanner);
         String resultat = ficarLlibreNou(0, nomLlibre, nomAutor);
         System.out.println(resultat);
@@ -167,6 +172,51 @@ public class Main {
     public static void modificarLlibreMenu(Scanner scanner) {
         System.out.println("=== Modificar Llibre ===");
         System.out.print("ID del llibre a modificar: ");
+        int idLlibre = scanner.nextInt();
+        scanner.nextLine(); // Limpiar el buffer después de leer un entero
+    
+        // Buscar si el libro con el ID existe
+        JSONObject llibreSeleccionat = null;
+        for (int i = 0; i < llibres.length(); i++) {
+            JSONObject llibre = llibres.getJSONObject(i);
+            if (llibre.getInt("Id") == idLlibre) {
+                llibreSeleccionat = llibre;
+                break;
+            }
+        }
+        // Si no se encuentra el libro, mostrar mensaje y salir
+        if (llibreSeleccionat == null) {
+            System.out.println("El llibre amb ID '" + idLlibre + "' no existeix.");
+            return;
+        }
+    
+        System.out.print("Camp a modificar (Titol/Autor): ");
+        String camp = scanner.nextLine().trim();
+        // Verificar que el campo a modificar sea válido
+        if (!camp.equals("Titol") && !camp.equals("Autor")) {
+            System.out.println("El camp '" + camp + "' no és vàlid. Només pots modificar Titol o Autor.");
+            return;
+        }
+    
+        // Manejar la modificación del campo
+        if (camp.equals("Titol")) {
+            String nouTitol = llegirNomLlibre(scanner);
+            llibreSeleccionat.put("Titol", nouTitol);
+        } else if (camp.equals("Autor")) {
+            String autorsInput = llegirNomAutor(scanner);
+            String[] autorsArray = autorsInput.split(",\\s*"); // Separar autores por comas
+            JSONArray nousAutors = new JSONArray(List.of(autorsArray));
+            llibreSeleccionat.put("Autor", nousAutors);
+        }
+    
+        // Guardar los cambios en el archivo
+        String resultat = guardarLlibres("./data/llibres.json");
+        System.out.println(resultat.startsWith("Error") ? resultat : "S'ha modificat correctament el llibre amb ID '" + idLlibre + "'.");
+    }
+    
+    public static void esborrarLlibreMenu(Scanner scanner) {
+        System.out.println("=== Esborrar Llibre ===");
+        System.out.print("ID del llibre a esborrar: ");
         int idLlibre = scanner.nextInt();
         boolean idExisteix = false;
         for (int i = 0; i < llibres.length(); i++) {
@@ -181,37 +231,6 @@ public class Main {
             return;
         }
         scanner.nextLine();
-
-        System.out.print("Camp a modificar (Titol/Autor): ");
-        String camp = scanner.nextLine();
-        boolean campExisteix = false;
-        for (int i = 0; i < llibres.length(); i++) {
-            JSONObject llibre = llibres.getJSONObject(i);
-            if (llibre.getString("Titol").equals(camp) || llibre.getString("Autor").equals(camp)) {
-                campExisteix = true;
-                break;
-            }
-        }
-        if (!campExisteix) {
-            System.out.println("El camp '" + camp + "' no existeix.");
-            return;
-        }
-        
-        Object nouValor = switch (camp) {
-            case "Titol" -> llegirNomLlibre(scanner);
-            case "Autor" -> llegirNomAutor(scanner);
-            default -> null;
-        };
-
-        String resultat = modificarLlibre(idLlibre, camp, nouValor);
-        System.out.println(resultat);
-    }
-
-    public static void esborrarLlibreMenu(Scanner scanner) {
-        System.out.println("=== Esborrar Llibre ===");
-        System.out.print("ID del llibre a esborrar: ");
-        int idLlibre = scanner.nextInt();
-        scanner.nextLine(); // Consumir salto de línea
         String resultat = esborrarLlibre(idLlibre);
         System.out.println(resultat);
     }
@@ -225,11 +244,21 @@ public class Main {
 
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
+            JSONArray autorsArray = llibre.getJSONArray("Autor");
+            StringBuilder autors = new StringBuilder();
+            for (int j = 0; j < autorsArray.length(); j++) {
+                autors.append(autorsArray.getString(j));
+                if (j < autorsArray.length() - 1) {
+                    autors.append(", "); // Separar múltiples autores con una coma
+                }
+            }
+
+            // Crear fila para el libro
             String fila = String.format(
-                "| %-10d | %-30s | %-50s |",
+                "| %-10s | %-30s | %-50s |",
                 llibre.getInt("Id"),
                 llibre.getString("Titol"),
-                llibre.getString("Autor")
+                autors.toString()
             );
             System.out.println(fila);
         }
