@@ -3,6 +3,7 @@ package com.project;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 import org.json.JSONArray;
@@ -43,7 +44,11 @@ public class Main {
         return true;
     }
 
-    public static boolean dataValida(String data) {
+    public static void date() {
+        LocalDate.now();
+    }
+
+    public static boolean dataValida(String data) { // mirar si realmente se necesita porque debería de cogerlo directamente, a lo mejor se necesita para 
         String[] dataStringArray = data.split("-");
         // mirar de que tots els elements de l'array siguin numeros sencers.
         if (dataStringArray.length != 3) { // comprobar que la longitut del array que conté la data es correcte.
@@ -350,35 +355,28 @@ public class Main {
         }
     }
     public static void llistatDePrestec() { // llista normal
-        String filePathPrestecs = "./data/prestecs.json";
-        String contentPrestecs = null;
+        JSONArray prestecs = null;
         try {
-            contentPrestecs = new String(Files.readAllBytes(Paths.get(filePathPrestecs)));
+            prestecs = prestecs();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
             return;
         }
-        JSONArray prestecs = new JSONArray(contentPrestecs);
-
-        String filePathLlibres = "./data/llibres.json";
-        String contentLlibres = null;
+        JSONArray llibres = null;
         try {
-            contentLlibres = new String(Files.readAllBytes(Paths.get(filePathLlibres)));
+            llibres = llibres();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
             return;
         }
-        JSONArray llibres = new JSONArray(contentLlibres);
-
-        String filePathUsuaris = "./data/usuaris.json";
-        String contentUsuaris = null;
+        
+        JSONArray usuaris = null;
         try {
-            contentUsuaris = new String(Files.readAllBytes(Paths.get(filePathUsuaris)));
+            usuaris = usuaris();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
             return;
         }
-        JSONArray usuaris = new JSONArray(contentUsuaris);
 
         System.out.println("-".repeat(118));
         System.out.println(String.format("| %-8s | %-35s | %25s | %12s | %12s |", "Id Prestec", "Títol del Llibre",
@@ -406,38 +404,28 @@ public class Main {
 
     public static void llistarPrestecsUsuari() {
         Scanner scanner = new Scanner(System.in);
-        // input de l'usuari verificant quin es el l'usuari que vol mirar.
-        // en el cas de que l'usuari no existeixi o no tingui llibres en prestec,
-        // imprimir un missatge i fer un return.
-        String filePathUsuari = "./data/usuaris.json";
-        String contentUsuaris = null;
+        JSONArray prestecs = null;
         try {
-            contentUsuaris = new String(Files.readAllBytes(Paths.get(filePathUsuari)));
+            prestecs = prestecs();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
             return;
         }
-        JSONArray usuaris = new JSONArray(contentUsuaris);
-
-        String filePathPrestecs = "./data/prestecs.json";
-        String contentPrestecs = null;
+        JSONArray llibres = null;
         try {
-            contentPrestecs = new String(Files.readAllBytes(Paths.get(filePathPrestecs)));
+            llibres = llibres();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
             return;
         }
-        JSONArray prestecs = new JSONArray(contentPrestecs);
-
-        String filePathLlibres = "./data/llibres.json";
-        String contentLlibres = null;
+        
+        JSONArray usuaris = null;
         try {
-            contentLlibres = new String(Files.readAllBytes(Paths.get(filePathLlibres)));
+            usuaris = usuaris();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
             return;
         }
-        JSONArray llibres = new JSONArray(contentLlibres);
 
         System.out.print("Inserta l'id o el nom de l'usuari: ");
         String identificadorUsuari = scanner.nextLine();
@@ -602,11 +590,11 @@ public class Main {
         scanner.close();
     }
 
-    // mvn clean test-compile exec:java -P"runMain"
-    // -D"exec.mainClass=com.project.Main"
+    // mvn clean test-compile exec:java -P"runMain" -D"exec.mainClass=com.project.Main"
     public static void main(String[] args) {
         System.out.println("Hello world!");
         gestio_prestecs();
     }
+
 
 }
