@@ -332,7 +332,92 @@ public class Main {
         System.out.println("-".repeat(118));
     }
 
-    // verificar que existeixin el llibre i l'usuari.
+    public static void llistarPrestecsUsuari(){
+        Scanner scanner = new Scanner(System.in);
+        //input de l'usuari verificant quin es el l'usuari que vol mirar.
+        //en el cas de que l'usuari no existeixi o no tingui llibres en prestec, imprimir un missatge i fer un return.
+        String filePathUsuari = "./data/usuaris.json";
+        String contentUsuaris = null;
+        try{
+            contentUsuaris = new String(Files.readAllBytes(Paths.get(filePathUsuari)));
+        } catch(IOException e){
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            return;
+        }
+        JSONArray usuaris = new JSONArray(contentUsuaris);
+
+        String filePathPrestecs = "./data/prestecs.json";
+        String contentPrestecs = null;
+        try{
+            contentPrestecs = new String(Files.readAllBytes(Paths.get(filePathPrestecs)));
+        } catch(IOException e){
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            return;
+        }
+        JSONArray prestecs = new JSONArray(contentPrestecs);
+
+        String filePathLlibres = "./data/llibres.json";
+        String contentLlibres = null;
+        try{
+            contentLlibres = new String(Files.readAllBytes(Paths.get(filePathLlibres)));
+        } catch(IOException e){
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            return;
+        }
+        JSONArray llibres = new JSONArray(contentLlibres);
+
+        System.out.print("Inserta l'id o el nom de l'usuari: ");
+        String identificadorUsuari = scanner.nextLine();
+
+        Integer idUsuari = null;
+        boolean usuariExistent = false;
+        for (int i = 0;i<usuaris.length();i++){
+            JSONObject usuari = usuaris.getJSONObject(i);
+            if (identificadorUsuari.equals(Integer.toString(usuari.getInt("id"))) || identificadorUsuari.equals(usuari.getString("nom"))){
+                idUsuari = usuari.getInt("id");
+                usuariExistent = true;
+            }
+        }
+        if (!usuariExistent){
+            System.out.println("L'usuari amb id o nom "+identificadorUsuari+" no existeix.");
+            return;
+        }
+
+        JSONObject usuari = null;
+        for (int k = 0;k<usuaris.length();k++){
+            JSONObject usuariBucle = usuaris.getJSONObject(k);
+            if (usuariBucle.getInt("id") == idUsuari){
+                usuari = usuaris.getJSONObject(k);
+            }
+        }
+        System.out.println("-".repeat(93));
+        String nomCognoms = usuari.getString("nom") + " "+usuari.getString("cognoms");
+        Integer padding = 90 - nomCognoms.length();
+        Integer espaInteger = padding / 2;
+        System.out.println(String.format("| "+" ".repeat(espaInteger)+"%s"+" ".repeat(espaInteger)+" |",nomCognoms));
+
+        //si existeix pero no te cap prestec.
+        boolean noTePrestesc = true;
+        System.out.println("-".repeat(93));
+        for (int j = 0; j<prestecs.length();j++){
+            JSONObject prestec = prestecs.getJSONObject(j);
+            for (int l = 0; l<llibres.length();l++){
+                JSONObject llibre = llibres.getJSONObject(l);
+                if (llibre.getInt("id") == prestec.getInt("idLlibre")){
+                    if (prestec.getInt("idUsuari") == idUsuari){
+                        System.out.println(String.format("| %-10s | %-30s | %25s | %15s |",prestec.getInt("id"),llibre.getString("titol"),prestec.getString("dataPrestec"),prestec.getString("dataDevolucio")));
+                        System.out.println("-".repeat(93));
+                        noTePrestesc = false;
+                    }
+                }
+            } 
+        }
+        if (noTePrestesc){
+            System.out.println("L'usuari amb id "+idUsuari+" no té prèstecs.");
+            return; 
+        }   
+    }
+
     public static void gestio_prestecs() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Escull una opció: ");
