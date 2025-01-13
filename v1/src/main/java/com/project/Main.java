@@ -261,8 +261,8 @@ public class Main {
                 autors.toString()
             );
             System.out.println(fila);
+            System.out.println(separador);
         }
-        System.out.println(separador);
     }
     
     public static ArrayList<String> menuLlibres() {
