@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Scanner;
 
 import org.json.JSONArray;
@@ -353,6 +352,107 @@ public class Main {
             return;
         }
     }
+
+    public static void modificarLlibrePrestecs(){
+        Scanner scanner = new Scanner(System.in);
+        
+        JSONArray llibres = null;
+        try {
+            llibres = llibres();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            return;
+        }
+
+        JSONArray usuaris = null;
+        try {
+            usuaris = usuaris();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            return;
+        }
+
+        JSONArray prestecs = null;
+        try {
+            prestecs = prestecs();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            return;
+        }
+        
+        llistatDePrestec();
+        System.out.println("Inserta l'id del préstec, per modificar: ");
+        String idPrestec = scanner.nextLine();
+
+        if (!digit(idPrestec)){
+            System.out.println("L'id del préstec ha de ser un número");
+            return;
+        }
+        //mirar limite de prestec.
+        String idLlibre = null;
+        boolean elLlibreExisteix = false;
+        
+        for (int i = 0;i<prestecs.length();i++){
+            JSONObject prestec = prestecs.getJSONObject(i);
+            for (int j = 0;j<llibres.length();j++){
+                JSONObject llibre = llibres.getJSONObject(j);
+                if (Integer.parseInt(idPrestec) == prestec.getInt("id")){
+                    System.out.print("Inserta l'id del llibre: ");
+                    idLlibre = scanner.nextLine();
+                    if (!digit(idLlibre)){
+                        System.out.println("L'id del llibre ha de ser un número");
+                        return;
+                    }
+
+                    
+                    if (Integer.parseInt(idLlibre) == llibre.getInt("id")){
+                        elLlibreExisteix = true;
+                        
+                        System.out.print("Camp a modificar (Llibre/Data devolució) ");
+                        String opc = scanner.nextLine();
+                        switch (opc.toLowerCase()) {
+                            case "llibre":
+                                boolean idExisteix = false;
+                                for (int k = 0;k<prestecs.length();k++){
+                                    if (prestec.getInt("idLlibre") == Integer.parseInt(idLlibre)){
+                                        System.out.println("Error");
+                                        return;
+                                    }
+                                    if (llibre.getInt("id") == Integer.parseInt(idLlibre)){
+                                        idExisteix = true;
+                                        prestec.put("idLlibre", idLlibre);
+
+                                    }
+                                }
+                                if (!idExisteix){
+                                    System.out.println("Error no existeix");
+                                    return;
+                                }
+                                
+                                
+                                break; 
+                            case "data devolució":
+                                break;
+                            default:
+                                System.out.println("El camp que has introduït no es correcte.");
+                                return;
+                        }
+
+                        
+                    }
+    
+                }
+            }
+            
+        }
+        if (!elLlibreExisteix){
+            System.out.println("El llibre amb l'id "+idLlibre+" no existeix.");
+        }
+
+        //modificar libro
+        //modificar fecha de entrega (devolver)
+        
+    }
     public static void llistatDePrestec() { // llista normal
         JSONArray prestecs = null;
         try {
@@ -550,7 +650,7 @@ public class Main {
                 break;
             case "2":
             case "modificar":
-                // modificar
+                modificarLlibrePrestecs();
                 break;
             case "3":
             case "esborrar":
