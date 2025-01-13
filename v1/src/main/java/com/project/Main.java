@@ -216,6 +216,7 @@ public class Main {
     
     public static void esborrarLlibreMenu(Scanner scanner) {
         System.out.println("=== Esborrar Llibre ===");
+        llistarTotsLlibres();
         System.out.print("ID del llibre a esborrar: ");
         int idLlibre = scanner.nextInt();
         boolean idExisteix = false;
@@ -233,6 +234,7 @@ public class Main {
         scanner.nextLine();
         String resultat = esborrarLlibre(idLlibre);
         System.out.println(resultat);
+        llistarTotsLlibres();
     }
 
     public static void llistarTotsLlibres() {

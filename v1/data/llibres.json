@@ -13,15 +13,5 @@
         "Autor": ["Gabriel García Márquez"],
         "Id": 3,
         "Titol": "Cien años de soledad"
-    },
-    {
-        "Autor": ["Biel"],
-        "Id": 4,
-        "Titol": "Evangelion"
-    },
-    {
-        "Autor": ["Paco Ramirez"],
-        "Id": 5,
-        "Titol": "Juego de Tronos"
     }
 ]
