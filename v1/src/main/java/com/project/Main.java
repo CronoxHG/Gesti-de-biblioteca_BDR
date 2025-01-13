@@ -1,5 +1,6 @@
 package com.project;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -9,6 +10,30 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Main {
+    public static JSONArray llibres() throws IOException {
+        // importar llibres.json
+        String filePathLlibres = "./data/llibres.json";
+        String contentLlibres = new String(Files.readAllBytes(Paths.get(filePathLlibres)));
+        JSONArray llibres = new JSONArray(contentLlibres);
+        return llibres;
+    }
+
+    public static JSONArray usuaris() throws IOException {
+        // importar usuaris.json
+        String filePathUsuaris = "./data/usuaris.json";
+        String contentUsuaris = new String(Files.readAllBytes(Paths.get(filePathUsuaris)));
+        JSONArray usuaris = new JSONArray(contentUsuaris);
+        return usuaris;
+    }
+
+    public static JSONArray prestecs() throws IOException {
+        // importar prestecs.json
+        String filePathPrestecs = "./data/prestecs.json";
+        String contentPrestecs = new String(Files.readAllBytes(Paths.get(filePathPrestecs)));
+        JSONArray prestecs = new JSONArray(contentPrestecs);
+        return prestecs;
+    }
+
     public static boolean digit(String num) {
         for (char numSeparat : num.toCharArray()) {
             if (!Character.isDigit(numSeparat)) {
@@ -277,7 +302,7 @@ public class Main {
         scanner.close();
     }
 
-    public static void llistarLlibresEnPrestec() { //llista normal
+    public static void llistatDePrestec() { // llista normal
         String filePathPrestecs = "./data/prestecs.json";
         String contentPrestecs = null;
         try {
@@ -332,15 +357,16 @@ public class Main {
         System.out.println("-".repeat(118));
     }
 
-    public static void llistarPrestecsUsuari(){
+    public static void llistarPrestecsUsuari() {
         Scanner scanner = new Scanner(System.in);
-        //input de l'usuari verificant quin es el l'usuari que vol mirar.
-        //en el cas de que l'usuari no existeixi o no tingui llibres en prestec, imprimir un missatge i fer un return.
+        // input de l'usuari verificant quin es el l'usuari que vol mirar.
+        // en el cas de que l'usuari no existeixi o no tingui llibres en prestec,
+        // imprimir un missatge i fer un return.
         String filePathUsuari = "./data/usuaris.json";
         String contentUsuaris = null;
-        try{
+        try {
             contentUsuaris = new String(Files.readAllBytes(Paths.get(filePathUsuari)));
-        } catch(IOException e){
+        } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
             return;
         }
@@ -348,9 +374,9 @@ public class Main {
 
         String filePathPrestecs = "./data/prestecs.json";
         String contentPrestecs = null;
-        try{
+        try {
             contentPrestecs = new String(Files.readAllBytes(Paths.get(filePathPrestecs)));
-        } catch(IOException e){
+        } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
             return;
         }
@@ -358,9 +384,9 @@ public class Main {
 
         String filePathLlibres = "./data/llibres.json";
         String contentLlibres = null;
-        try{
+        try {
             contentLlibres = new String(Files.readAllBytes(Paths.get(filePathLlibres)));
-        } catch(IOException e){
+        } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
             return;
         }
@@ -371,51 +397,111 @@ public class Main {
 
         Integer idUsuari = null;
         boolean usuariExistent = false;
-        for (int i = 0;i<usuaris.length();i++){
+        for (int i = 0; i < usuaris.length(); i++) {
             JSONObject usuari = usuaris.getJSONObject(i);
-            if (identificadorUsuari.equals(Integer.toString(usuari.getInt("id"))) || identificadorUsuari.equals(usuari.getString("nom"))){
+            if (identificadorUsuari.equals(Integer.toString(usuari.getInt("id")))
+                    || identificadorUsuari.equals(usuari.getString("nom"))) {
                 idUsuari = usuari.getInt("id");
                 usuariExistent = true;
             }
         }
-        if (!usuariExistent){
-            System.out.println("L'usuari amb id o nom "+identificadorUsuari+" no existeix.");
+        if (!usuariExistent) {
+            System.out.println("L'usuari amb id o nom " + identificadorUsuari + " no existeix.");
             return;
         }
 
         JSONObject usuari = null;
-        for (int k = 0;k<usuaris.length();k++){
+        for (int k = 0; k < usuaris.length(); k++) {
             JSONObject usuariBucle = usuaris.getJSONObject(k);
-            if (usuariBucle.getInt("id") == idUsuari){
+            if (usuariBucle.getInt("id") == idUsuari) {
                 usuari = usuaris.getJSONObject(k);
             }
         }
         System.out.println("-".repeat(93));
-        String nomCognoms = usuari.getString("nom") + " "+usuari.getString("cognoms");
+        String nomCognoms = usuari.getString("nom") + " " + usuari.getString("cognoms");
         Integer padding = 90 - nomCognoms.length();
         Integer espaInteger = padding / 2;
-        System.out.println(String.format("| "+" ".repeat(espaInteger)+"%s"+" ".repeat(espaInteger)+" |",nomCognoms));
+        System.out.println(
+                String.format("| " + " ".repeat(espaInteger) + "%s" + " ".repeat(espaInteger) + " |", nomCognoms));
 
-        //si existeix pero no te cap prestec.
+        // si existeix pero no te cap prestec.
         boolean noTePrestesc = true;
         System.out.println("-".repeat(93));
-        for (int j = 0; j<prestecs.length();j++){
+        for (int j = 0; j < prestecs.length(); j++) {
             JSONObject prestec = prestecs.getJSONObject(j);
-            for (int l = 0; l<llibres.length();l++){
+            for (int l = 0; l < llibres.length(); l++) {
                 JSONObject llibre = llibres.getJSONObject(l);
-                if (llibre.getInt("id") == prestec.getInt("idLlibre")){
-                    if (prestec.getInt("idUsuari") == idUsuari){
-                        System.out.println(String.format("| %-10s | %-30s | %25s | %15s |",prestec.getInt("id"),llibre.getString("titol"),prestec.getString("dataPrestec"),prestec.getString("dataDevolucio")));
+                if (llibre.getInt("id") == prestec.getInt("idLlibre")) {
+                    if (prestec.getInt("idUsuari") == idUsuari) {
+                        System.out.println(String.format("| %-10s | %-30s | %25s | %15s |", prestec.getInt("id"),
+                                llibre.getString("titol"), prestec.getString("dataPrestec"),
+                                prestec.getString("dataDevolucio")));
                         System.out.println("-".repeat(93));
                         noTePrestesc = false;
                     }
                 }
-            } 
+            }
         }
-        if (noTePrestesc){
-            System.out.println("L'usuari amb id "+idUsuari+" no té prèstecs.");
-            return; 
-        }   
+        if (noTePrestesc) {
+            System.out.println("L'usuari amb id " + idUsuari + " no té prèstecs.");
+            return;
+        }
+    }
+
+    public static void llistarLlibresEnPrestec() {
+        JSONArray llibres = null;
+        try {
+            llibres = llibres();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            return;
+        }
+
+        JSONArray usuaris = null;
+        try {
+            usuaris = usuaris();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            return;
+        }
+
+        JSONArray prestecs = null;
+        try {
+            prestecs = prestecs();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            return;
+        }
+
+        System.out.println("-".repeat(166));
+        Integer padding = 146 - prestecs.length();
+        Integer espaiEsquerra = padding / 2;
+        Integer espaiDreta = padding -espaiEsquerra;
+        System.out.println("| " + " ".repeat(espaiEsquerra) + "Llibres en prèstecs" + " ".repeat(espaiDreta) + " |");
+        System.out.println("-".repeat(166));
+        System.out.println(String.format("| %-8s | %-35s | %-35s | %35s | %12s | %12s |", "Id Prestec", "Nom i cognoms",
+                "Títol del Llibre",
+                "Autor/Autors", "Data de prèstec", "Data de devolució"));
+        System.out.println("-".repeat(166));
+        for (int i = 0; i < llibres.length(); i++) {
+            JSONObject llibre = llibres.getJSONObject(i);
+            for (int j = 0; j < prestecs.length(); j++) {
+                JSONObject prestec = prestecs.getJSONObject(j);
+                for (int k = 0; k < usuaris.length(); k++) {
+                    JSONObject usuari = usuaris.getJSONObject(k);
+                    if (llibre.getInt("id") == prestec.getInt("idLlibre")){
+                        if (usuari.getInt("id") == prestec.getInt("idUsuari")){
+                            System.out.println(String.format("| %-10s | %-35s | %-35s | %35s | %15s | %17s |", prestec.getInt("id"),
+                            usuari.getString("nom") + " " + usuari.getString("cognoms"), llibre.getString("titol"),
+                            llibre.getJSONArray("autor").join(", "), prestec.getString("dataPrestec"),
+                            prestec.getString("dataDevolucio")));
+                            System.out.println("-".repeat(166));
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     public static void gestio_prestecs() {
@@ -442,15 +528,20 @@ public class Main {
                 switch (opc.toLowerCase()) {
                     case "1":
                     case "Llistat de préstecs":
-                        llistarLlibresEnPrestec();
+                        llistatDePrestec();
                         break;
                     case "2":
                     case "Llistat de préstecs d'un usuari":
                         llistarPrestecsUsuari();
-                    // default:
-                    //     break;
+                        break;
+                    case "3":
+                    case "Llistat de llibres en préstec":
+                        llistarLlibresEnPrestec();
+                        break;
+                        // default:
+                        // break;
                 }
-                
+
                 break;
             case "0":
             case "sortir":
