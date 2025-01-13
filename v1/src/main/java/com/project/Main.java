@@ -171,6 +171,7 @@ public class Main {
     
     public static void modificarLlibreMenu(Scanner scanner) {
         System.out.println("=== Modificar Llibre ===");
+        llistarTotsLlibres();
         System.out.print("ID del llibre a modificar: ");
         int idLlibre = scanner.nextInt();
         scanner.nextLine(); // Limpiar el buffer después de leer un entero
