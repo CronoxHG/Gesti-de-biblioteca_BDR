@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 import org.json.JSONArray;
@@ -13,6 +14,7 @@ public class Main {
     public static String filePathPrestecs = "./data/prestecs.json";
     public static String filePathLlibres = "./data/llibres.json";
     public static String filePathUsuaris = "./data/usuaris.json";
+    public static LocalDate dataDeAvui = LocalDate.now();
     
     public static JSONArray llibres() throws IOException {
         // importar llibres.json
@@ -42,10 +44,6 @@ public class Main {
             }
         }
         return true;
-    }
-
-    public static void date() {
-        LocalDate.now();
     }
 
     public static boolean dataValida(String data) { // mirar si realmente se necesita porque debería de cogerlo directamente, a lo mejor se necesita para 
@@ -194,7 +192,7 @@ public class Main {
             }
         }
 
-        // agafat la informació de l'arxiu llibres.json
+        // agafat la informació de l'arxiu llibres.json TODO
         String filePathLlibres = "./data/llibres.json";
         String contentLlibres = null;
         try {
@@ -266,17 +264,16 @@ public class Main {
             return;
         }
 
-        System.out.print("Inserta la data de prèstec (aaaa-mm-dd): ");
-        String data = scanner.nextLine();
-        if (!dataValida(data)) {
-            System.out.println("La data no és vàlida. Ha de ser amb el format aaaa-mm-dd");
-            return;
-        }
-        String[] dataStringArray = data.split("-");
-        Integer any = Integer.parseInt(dataStringArray[0]);
-        Integer mes = Integer.parseInt(dataStringArray[1]);
-        Integer dia = Integer.parseInt(dataStringArray[2]);
-        String dataInsertar = (String.format("%04d-%02d-%02d", any, mes, dia));
+        // System.out.print("Inserta la data de prèstec (aaaa-mm-dd): ");
+        // String data = scanner.nextLine();
+        // if (!dataValida(data)) {
+        //     System.out.println("La data no és vàlida. Ha de ser amb el format aaaa-mm-dd");
+        //     return;
+        // }
+        // String[] dataStringArray = data.split("-");
+        // Integer any = Integer.parseInt(dataStringArray[0]);
+        // Integer mes = Integer.parseInt(dataStringArray[1]);
+        // Integer dia = Integer.parseInt(dataStringArray[2]);
 
         Integer numMesGran = 0;
         for (int i = 0; i < prestecs.length(); i++) {
@@ -292,7 +289,9 @@ public class Main {
         nouPrestec.put("id", numMesGran + 1); // TODO acabar
         nouPrestec.put("idLlibre", idLlibreInteger);
         nouPrestec.put("idUsuari", idUsuariInteger);
-        nouPrestec.put("dataPrestec", dataInsertar);
+        nouPrestec.put("dataPrestec", dataDeAvui);
+        nouPrestec.put("dataDevolucio",dataDeAvui.plusDays(7));
+
         // hi ha que calcular la data de quan s'acaba la devolució.
         // prestecs.put("idUsuari",idUsuariInteger);
 
