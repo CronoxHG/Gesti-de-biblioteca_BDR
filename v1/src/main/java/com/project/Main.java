@@ -392,9 +392,9 @@ public class Main {
             JSONObject prestec = prestecs.getJSONObject(i);
 
             if (Integer.parseInt(idPrestec) == prestec.getInt("id")) {
-                System.out.print("Camp a modificar (Llibre/Data devolució): ");
+                System.out.print("Camp a modificar (Llibre/Data devolucio): ");
                 String opc = scanner.nextLine();
-                switch (opc.toLowerCase().trim()) {
+                switch (opc.toLowerCase().trim().replace('ó', 'o')) {
                     case "llibre":
                         String idLlibre = null;
                         System.out.print("Inserta l'id del llibre: ");
@@ -419,7 +419,7 @@ public class Main {
 
                         }
                         if (!idExisteix) {
-                            System.out.println("Error no existeix");
+                            System.out.println("No existeix el llibre amb id "+idLlibre);
                             return;
                         }
                         prestec.put("idLlibre", Integer.parseInt(idLlibre));
@@ -430,22 +430,35 @@ public class Main {
                             System.out.println("Ha surgit un error inesperat en el fitxer.");
                             return;
                         }
-
                         break;
-                    case "data devolució":
+                    case "data devolucio":
+                        System.out.print("Inserta una data vàlida (aaaa-mm-dd): ");
+                        String dataDevolucio = scanner.nextLine();
+                        if(!dataValida(dataDevolucio)){
+                            System.out.println("La data "+dataDevolucio+" no és vàlida.");
+                            return;
+                        }
+                        prestec.put("dataDevolucio", dataDevolucio);
+                        textoJson = prestecs.toString(4);
+                        try {
+                            Files.write(Paths.get(filePathPrestecs), textoJson.getBytes());
+                        } catch (IOException e) {
+                            System.out.println("Ha surgit un error inesperat en el fitxer.");
+                            return;
+                        }
+
                         break;
                     default:
                         System.out.println("El camp que has introduït no es correcte.");
                         return;
                 }
+                llistatDePrestec();
+                System.out.println();
+                System.out.println("S'ha canviat correctament");
 
             }
 
         }
-
-        // modificar libro
-        // modificar fecha de entrega (devolver)
-
     }
 
     public static void llistatDePrestec() { // llista normal
