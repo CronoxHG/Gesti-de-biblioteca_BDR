@@ -1,6 +1,5 @@
 package com.project;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -10,9 +9,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Main {
+    public static String filePathPrestecs = "./data/prestecs.json";
+    public static String filePathLlibres = "./data/llibres.json";
+    public static String filePathUsuaris = "./data/usuaris.json";
+    
     public static JSONArray llibres() throws IOException {
         // importar llibres.json
-        String filePathLlibres = "./data/llibres.json";
         String contentLlibres = new String(Files.readAllBytes(Paths.get(filePathLlibres)));
         JSONArray llibres = new JSONArray(contentLlibres);
         return llibres;
@@ -20,7 +22,6 @@ public class Main {
 
     public static JSONArray usuaris() throws IOException {
         // importar usuaris.json
-        String filePathUsuaris = "./data/usuaris.json";
         String contentUsuaris = new String(Files.readAllBytes(Paths.get(filePathUsuaris)));
         JSONArray usuaris = new JSONArray(contentUsuaris);
         return usuaris;
@@ -28,7 +29,6 @@ public class Main {
 
     public static JSONArray prestecs() throws IOException {
         // importar prestecs.json
-        String filePathPrestecs = "./data/prestecs.json";
         String contentPrestecs = new String(Files.readAllBytes(Paths.get(filePathPrestecs)));
         JSONArray prestecs = new JSONArray(contentPrestecs);
         return prestecs;
@@ -302,6 +302,53 @@ public class Main {
         scanner.close();
     }
 
+    public static void esborrarPrestecs(){
+        Scanner scanner = new Scanner(System.in);
+        JSONArray prestecs = null;
+        try {
+            prestecs = prestecs();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            scanner.close();
+            return;
+        }
+        //mostrar la llista de llibres en prestec.
+        llistarLlibresEnPrestec();
+
+        System.out.print("Inserta l'id del préstec que vols esborrar: ");
+        String idEsborrar = scanner.nextLine();
+        System.out.println();
+        scanner.close();
+
+        if (!digit(idEsborrar)){
+            System.out.println("L'id ha de ser un número.");
+            return;
+        }
+        boolean idExistent = false;
+        for (int i = 0;i<prestecs.length();i++){
+            JSONObject prestec = prestecs.getJSONObject(i); 
+            if (prestec.getInt("id") == Integer.parseInt(idEsborrar)){
+                idExistent = true;
+                prestecs.remove(i);
+                String textoJson = prestecs.toString(4);
+                try {
+                    Files.write(Paths.get(filePathPrestecs), textoJson.getBytes());
+                } catch (IOException e) {
+                    System.out.println("Ha surgit un error inesperat en el fitxer.");
+                    return;
+                }
+                llistarLlibresEnPrestec();
+                System.out.println();
+                System.out.println("S'ha esborrar el préstec.");
+                return;
+            }
+
+        }
+        if (!idExistent){
+            System.out.println("L'id " + idEsborrar + " no existeix.");
+            return;
+        }
+    }
     public static void llistatDePrestec() { // llista normal
         String filePathPrestecs = "./data/prestecs.json";
         String contentPrestecs = null;
@@ -474,10 +521,11 @@ public class Main {
         }
 
         System.out.println("-".repeat(166));
-        Integer padding = 146 - prestecs.length();
+        String llibresEnPrestecs = "Llibres en prèstecs";
+        Integer padding = 162 - llibresEnPrestecs.length();
         Integer espaiEsquerra = padding / 2;
         Integer espaiDreta = padding -espaiEsquerra;
-        System.out.println("| " + " ".repeat(espaiEsquerra) + "Llibres en prèstecs" + " ".repeat(espaiDreta) + " |");
+        System.out.println("| " + " ".repeat(espaiEsquerra) + llibresEnPrestecs + " ".repeat(espaiDreta) + " |");
         System.out.println("-".repeat(166));
         System.out.println(String.format("| %-8s | %-35s | %-35s | %35s | %12s | %12s |", "Id Prestec", "Nom i cognoms",
                 "Títol del Llibre",
@@ -518,8 +566,8 @@ public class Main {
                 // modificar
                 break;
             case "3":
-            case "eliminar":
-                // eliminar
+            case "esborrar":
+                esborrarPrestecs();
                 break;
             case "4":
             case "llistar":
