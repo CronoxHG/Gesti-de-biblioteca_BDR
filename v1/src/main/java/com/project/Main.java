@@ -1,5 +1,6 @@
 package com.project;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.io.IOException;
@@ -352,7 +353,39 @@ public class Main {
         scanner.nextLine();
     }
     
-    
+    public static void llistarLlibresPerAutor() {
+        HashMap<String, List<JSONObject>> autorsMap = new HashMap<>();
+
+        String header = String.format("| %-50s | %-30s | %-10s |", "Autor(s)", "Títol", "Id Llibre");
+        String separador = "-".repeat(header.length());
+        System.out.println(separador);
+        System.out.println(header);
+        System.out.println(separador);
+        
+        for (int i = 0; i < llibres.length(); i++) {
+            JSONObject llibre = llibres.getJSONObject(i);
+            JSONArray autorsArray = llibre.getJSONArray("Autor");
+            
+            for (int j = 0; j < autorsArray.length(); j++) {
+                String autor = autorsArray.getString(j);
+
+                autorsMap.putIfAbsent(autor, new ArrayList<>());
+                autorsMap.get(autor).add(llibre);
+            }
+
+            String fila = String.format(
+                "| %-50s | %-30s | %-10s |",
+                autorsArray.toString(),
+                llibre.getString("Titol"),
+                llibre.getInt("Id")
+            );
+            System.out.println(fila);
+            System.out.println(separador);
+        }
+        Scanner scanner = new Scanner(System.in);
+        scanner.nextLine();
+    }
+
     public static ArrayList<String> menuLlibres() {
         String menuText = """
                 Gestió de llibres
@@ -475,7 +508,7 @@ public class Main {
                     llistarLlibresEnPrestec();
                     break;
                 case "Per autor":
-                    // Aqui se pone la función para listar los libros por autor
+                    llistarLlibresPerAutor();
                     break;
                 case "Cercar títol":
                     // Aqui se pone la función para listar los libros buscados por titulo
