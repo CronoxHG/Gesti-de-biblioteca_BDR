@@ -23,5 +23,10 @@
         "titol": "Capitan America",
         "id": 7,
         "autor": ["Marvel"]
+    },
+    {
+        "titol": "Cortar por la linea de puntos",
+        "id": 8,
+        "autor": ["Jose Jimenez"]
     }
 ]
