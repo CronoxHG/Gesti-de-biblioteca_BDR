@@ -157,6 +157,7 @@ public class Main {
             content = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
+            scanner.close();
             return;
         }
 
@@ -164,6 +165,7 @@ public class Main {
         // no puc preguntar l'id del prèstec hauria de ser autoincrement.
         System.out.print("Introdueix l'id del llibre que vols: ");// podriem fer-lo també amb títol.
         String idLlibre = scanner.nextLine();
+        scanner.close();
 
         // verificar que el idLlibre es un número.
         try {
@@ -191,7 +193,6 @@ public class Main {
             }
         }
 
-        // agafat la informació de l'arxiu llibres.json TODO
         String filePathLlibres = "./data/llibres.json";
         String contentLlibres = null;
         try {
@@ -226,6 +227,7 @@ public class Main {
 
         System.out.print("Introdueix l'id del usuari: ");// podriem fer-lo també amb títol.
         String idUsuari = scanner.nextLine();
+        scanner.close();
         try {
             Integer.parseInt(idUsuari);
         } catch (NumberFormatException e) {
@@ -263,17 +265,6 @@ public class Main {
             return;
         }
 
-        // System.out.print("Inserta la data de prèstec (aaaa-mm-dd): ");
-        // String data = scanner.nextLine();
-        // if (!dataValida(data)) {
-        //     System.out.println("La data no és vàlida. Ha de ser amb el format aaaa-mm-dd");
-        //     return;
-        // }
-        // String[] dataStringArray = data.split("-");
-        // Integer any = Integer.parseInt(dataStringArray[0]);
-        // Integer mes = Integer.parseInt(dataStringArray[1]);
-        // Integer dia = Integer.parseInt(dataStringArray[2]);
-
         Integer numMesGran = 0;
         for (int i = 0; i < prestecs.length(); i++) {
             JSONObject prestec = prestecs.getJSONObject(i);
@@ -285,15 +276,11 @@ public class Main {
         // afegir el prestec dintre del fitxer json.
         JSONObject nouPrestec = new JSONObject();
 
-        nouPrestec.put("id", numMesGran + 1); // TODO acabar
+        nouPrestec.put("id", numMesGran + 1);
         nouPrestec.put("idLlibre", idLlibreInteger);
         nouPrestec.put("idUsuari", idUsuariInteger);
         nouPrestec.put("dataPrestec", dataDeAvui);
         nouPrestec.put("dataDevolucio",dataDeAvui.plusDays(7));
-
-        // hi ha que calcular la data de quan s'acaba la devolució.
-        // prestecs.put("idUsuari",idUsuariInteger);
-
         prestecs.put(nouPrestec);
         String textoJson = prestecs.toString(4);
         try {
@@ -360,14 +347,7 @@ public class Main {
             llibres = llibres();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
-            return;
-        }
-
-        JSONArray usuaris = null;
-        try {
-            usuaris = usuaris();
-        } catch (IOException e) {
-            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            scanner.close();
             return;
         }
 
@@ -376,15 +356,17 @@ public class Main {
             prestecs = prestecs();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
+            scanner.close();
             return;
         }
 
         llistatDePrestec();
-        System.out.print("Inserta l'id del préstec, per modificar: "); // 1
+        System.out.print("Inserta l'id del préstec, per modificar: ");
         String idPrestec = scanner.nextLine();
 
         if (!digit(idPrestec)) {
             System.out.println("L'id del préstec ha de ser un número");
+            scanner.close();
             return;
         }
 
@@ -434,6 +416,7 @@ public class Main {
                     case "data devolucio":
                         System.out.print("Inserta una data vàlida (aaaa-mm-dd): ");
                         String dataDevolucio = scanner.nextLine();
+                        scanner.close();
                         if(!dataValida(dataDevolucio)){
                             System.out.println("La data "+dataDevolucio+" no és vàlida.");
                             return;
@@ -516,6 +499,7 @@ public class Main {
             prestecs = prestecs();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
+            scanner.close();
             return;
         }
         JSONArray llibres = null;
@@ -523,6 +507,7 @@ public class Main {
             llibres = llibres();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
+            scanner.close();
             return;
         }
         
@@ -531,11 +516,13 @@ public class Main {
             usuaris = usuaris();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
+            scanner.close();
             return;
         }
 
         System.out.print("Inserta l'id o el nom de l'usuari: ");
         String identificadorUsuari = scanner.nextLine();
+        scanner.close();
 
         Integer idUsuari = null;
         boolean usuariExistent = false;
