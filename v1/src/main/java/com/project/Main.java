@@ -91,7 +91,7 @@ public class Main {
     public static int calcularNouId() {
         int maxId = 0;
         for (int i = 0; i < llibres.length(); i++) {
-            maxId = Math.max(maxId, llibres.getJSONObject(i).getInt("Id"));
+            maxId = Math.max(maxId, llibres.getJSONObject(i).getInt("id"));
         }
         return maxId + 1;
     }
@@ -107,9 +107,9 @@ public class Main {
         autorsArray.put(nomAutor); // Afegir el nom de l'autor com un element del array
     
         // Configurar els valors del llibre nou
-        nouLlibre.put("Id", nouId);
-        nouLlibre.put("Titol", nomLlibre);
-        nouLlibre.put("Autor", autorsArray); // Afegir l'array d'autors
+        nouLlibre.put("id", nouId);
+        nouLlibre.put("titol", nomLlibre);
+        nouLlibre.put("autor", autorsArray); // Afegir l'array d'autors
     
         // Afegir el llibre a la llista de llibres
         llibres.put(nouLlibre);
@@ -122,7 +122,7 @@ public class Main {
     public static String modificarLlibre(int idLlibre, String camp, Object nouValor) {
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
-            if (llibre.getInt("Id") == idLlibre) {
+            if (llibre.getInt("id") == idLlibre) {
                 if (llibre.has(camp)) {
                     llibre.put(camp, nouValor);
                     return guardarLlibres("./data/llibres.json");
@@ -137,7 +137,7 @@ public class Main {
     public static String esborrarLlibre(int idLlibre) {
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
-            if (llibre.getInt("Id") == idLlibre) {
+            if (llibre.getInt("id") == idLlibre) {
                 llibres.remove(i);
                 return guardarLlibres("./data/llibres.json");
             }
@@ -228,7 +228,7 @@ public class Main {
         JSONObject llibreSeleccionat = null;
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
-            if (llibre.getInt("Id") == idLlibre) {
+            if (llibre.getInt("id") == idLlibre) {
                 llibreSeleccionat = llibre;
                 break;
             }
@@ -250,12 +250,12 @@ public class Main {
         // Manejar la modificación del campo
         if (camp.equals("Titol")) {
             String nouTitol = llegirNomLlibre(scanner);
-            llibreSeleccionat.put("Titol", nouTitol);
+            llibreSeleccionat.put("titol", nouTitol);
         } else if (camp.equals("Autor")) {
             String autorsInput = llegirNomAutor(scanner);
             String[] autorsArray = autorsInput.split(",\\s*"); // Separar autores por comas
             JSONArray nousAutors = new JSONArray(List.of(autorsArray));
-            llibreSeleccionat.put("Autor", nousAutors);
+            llibreSeleccionat.put("autor", nousAutors);
         }
     
         // Guardar los cambios en el archivo
@@ -271,7 +271,7 @@ public class Main {
         boolean idExisteix = false;
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
-            if (llibre.getInt("Id") == idLlibre) {
+            if (llibre.getInt("id") == idLlibre) {
                 idExisteix = true;
                 break;
             }
@@ -295,7 +295,7 @@ public class Main {
 
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
-            JSONArray autorsArray = llibre.getJSONArray("Autor");
+            JSONArray autorsArray = llibre.getJSONArray("autor");
             StringBuilder autors = new StringBuilder();
             for (int j = 0; j < autorsArray.length(); j++) {
                 autors.append(autorsArray.getString(j));
@@ -307,8 +307,8 @@ public class Main {
             // Crear fila para el libro
             String fila = String.format(
                 "| %-10s | %-30s | %-50s |",
-                llibre.getInt("Id"),
-                llibre.getString("Titol"),
+                llibre.getInt("id"),
+                llibre.getString("titol"),
                 autors.toString()
             );
             System.out.println(fila);
@@ -341,15 +341,15 @@ public class Main {
                 JSONObject prestec = prestecsLlistar.getJSONObject(j);
                 for (int k = 0; k < usuarisLlistar.length(); k++) {
                     JSONObject usuari = usuarisLlistar.getJSONObject(k);
-                    if (llibre.getInt("Id") == prestec.getInt("IdLlibre")) {
-                        if (usuari.getInt("Id") == prestec.getInt("IdUsuari")) {
+                    if (llibre.getInt("id") == prestec.getInt("idLlibre")) {
+                        if (usuari.getInt("id") == prestec.getInt("idUsuari")) {
                             System.out.println(String.format("| %-10s | %-35s | %-35s | %35s | %15s | %17s |",
-                                    prestec.getInt("Id"),
+                                    prestec.getInt("id"),
                                     usuari.getString("Nom") + " " + usuari.getString("Cognoms"),
-                                    llibre.getString("Titol"),
-                                    llibre.getJSONArray("Autor").join(", "),
-                                    prestec.getString("DataPrestec"),
-                                    prestec.getString("DataDevolucio")));
+                                    llibre.getString("titol"),
+                                    llibre.getJSONArray("autor").join(", "),
+                                    prestec.getString("dataPrestec"),
+                                    prestec.getString("dataDevolucio")));
                             System.out.println("-".repeat(166));
                         }
                     }
@@ -370,7 +370,7 @@ public class Main {
         
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
-            JSONArray autorsArray = llibre.getJSONArray("Autor");
+            JSONArray autorsArray = llibre.getJSONArray("autor");
             
             for (int j = 0; j < autorsArray.length(); j++) {
                 String autor = autorsArray.getString(j);
@@ -382,8 +382,8 @@ public class Main {
             String fila = String.format(
                 "| %-50s | %-30s | %-10s |",
                 autorsArray.toString(),
-                llibre.getString("Titol"),
-                llibre.getInt("Id")
+                llibre.getString("titol"),
+                llibre.getInt("id")
             );
             System.out.println(fila);
             System.out.println(separador);
@@ -405,7 +405,7 @@ public class Main {
         boolean titolExisteix = false;
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
-            JSONArray autorsArray = llibre.getJSONArray("Autor");
+            JSONArray autorsArray = llibre.getJSONArray("autor");
             StringBuilder autors = new StringBuilder();
             for (int j = 0; j < autorsArray.length(); j++) {
                 autors.append(autorsArray.getString(j));
@@ -417,8 +417,8 @@ public class Main {
                 titolExisteix = true;
                 String fila = String.format(
                 "| %-10s | %-30s | %-50s |",
-                llibre.getInt("Id"),
-                llibre.getString("Titol"),
+                llibre.getInt("id"),
+                llibre.getString("titol"),
                 autors.toString()
                 );
                 System.out.println(fila);

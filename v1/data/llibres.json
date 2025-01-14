@@ -1,32 +1,27 @@
 [
     {
-        "Autor": ["Antoine de Saint-Exupéry"],
-        "Id": 1,
-        "Titol": "El Petit Príncep"
+        "titol": "El Petit Príncep",
+        "id": 1,
+        "autor": ["Antoine de Saint-Exupéry"]
     },
     {
-        "Autor": ["George Orwell"],
-        "Id": 2,
-        "Titol": "1984"
+        "titol": "1984",
+        "id": 2,
+        "autor": ["George Orwell"]
     },
     {
-        "Autor": ["Gabriel García Márquez"],
-        "Id": 3,
-        "Titol": "Cien años de soledad"
+        "titol": "Cien años de soledad",
+        "id": 3,
+        "autor": ["Gabriel García Márquez"]
     },
     {
-        "Autor": ["Jose Aznar"],
-        "Id": 5,
-        "Titol": "Evangelion"
+        "titol": "Evangelion",
+        "id": 5,
+        "autor": ["Jose Aznar"]
     },
     {
-        "Autor": ["DC Comics"],
-        "Id": 6,
-        "Titol": "Batman Arkham City"
-    },
-    {
-        "Autor": ["Marvel"],
-        "Id": 7,
-        "Titol": "Iron Man Returns"
+        "titol": "Capitan America",
+        "id": 7,
+        "autor": ["Marvel"]
     }
 ]
