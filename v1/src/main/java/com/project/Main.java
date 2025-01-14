@@ -413,7 +413,7 @@ public class Main {
                     autors.append(", "); // Separar múltiples autores con una coma
                 }
             }
-            if (llibre.getString("Titol").equals(titolLlibre)) {
+            if (llibre.getString("Titol").contains(titolLlibre)) {
                 titolExisteix = true;
                 String fila = String.format(
                 "| %-10s | %-30s | %-50s |",
