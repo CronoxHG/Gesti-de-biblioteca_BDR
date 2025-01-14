@@ -38,6 +38,34 @@ public class Main {
         }
     }
 
+    public static JSONArray usuaris;
+    // Inicialización del JSONArray
+    static {
+        usuaris = new JSONArray();
+        try {
+            // Leer el contenido del archivo JSON
+            String filePath = "./data/usuaris.json";
+            String content = new String(Files.readAllBytes(Paths.get(filePath)));
+            usuaris = new JSONArray(content);
+        } catch (IOException e) {
+            System.out.println("No s'ha pogut llegir el fitxer de llibres. Inicialitzant amb un JSONArray buit.");
+        }
+    }
+
+    public static JSONArray prestecs;
+    // Inicialización del JSONArray
+    static {
+        prestecs = new JSONArray();
+        try {
+            // Leer el contenido del archivo JSON
+            String filePath = "./data/prestecs.json";
+            String content = new String(Files.readAllBytes(Paths.get(filePath)));
+            prestecs = new JSONArray(content);
+        } catch (IOException e) {
+            System.out.println("No s'ha pogut llegir el fitxer de llibres. Inicialitzant amb un JSONArray buit.");
+        }
+    }
+
     public static String guardarLlibres(String filePath) {
         try {
             Files.write(Paths.get(filePath), llibres.toString(4).getBytes());
@@ -282,6 +310,48 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
     }
+
+    public static void llistarLlibresEnPrestec() {
+        JSONArray llibresLlistar = llibres;
+        JSONArray usuarisLlistar = usuaris;
+        JSONArray prestecsLlistar = prestecs;
+    
+        System.out.println("-".repeat(166));
+        String llibresEnPrestecs = "Llibres en prèstecs";
+        int padding = 162 - llibresEnPrestecs.length();
+        int espaiEsquerra = padding / 2;
+        int espaiDreta = padding - espaiEsquerra;
+        System.out.println("| " + " ".repeat(espaiEsquerra) + llibresEnPrestecs + " ".repeat(espaiDreta) + " |");
+        System.out.println("-".repeat(166));
+        System.out.println(String.format("| %-8s | %-35s | %-35s | %35s | %12s | %12s |", "Id Prestec", "Nom i cognoms",
+                "Títol del Llibre", "Autor/Autors", "Data de prèstec", "Data de devolució"));
+        System.out.println("-".repeat(166));
+    
+        for (int i = 0; i < llibresLlistar.length(); i++) {
+            JSONObject llibre = llibresLlistar.getJSONObject(i);
+            for (int j = 0; j < prestecsLlistar.length(); j++) {
+                JSONObject prestec = prestecsLlistar.getJSONObject(j);
+                for (int k = 0; k < usuarisLlistar.length(); k++) {
+                    JSONObject usuari = usuarisLlistar.getJSONObject(k);
+                    if (llibre.getInt("Id") == prestec.getInt("IdLlibre")) {
+                        if (usuari.getInt("Id") == prestec.getInt("IdUsuari")) {
+                            System.out.println(String.format("| %-10s | %-35s | %-35s | %35s | %15s | %17s |",
+                                    prestec.getInt("Id"),
+                                    usuari.getString("Nom") + " " + usuari.getString("Cognoms"),
+                                    llibre.getString("Titol"),
+                                    llibre.getJSONArray("Autor").join(", "),
+                                    prestec.getString("DataPrestec"),
+                                    prestec.getString("DataDevolucio")));
+                            System.out.println("-".repeat(166));
+                        }
+                    }
+                }
+            }
+        }
+        Scanner scanner = new Scanner(System.in);
+        scanner.nextLine();
+    }
+    
     
     public static ArrayList<String> menuLlibres() {
         String menuText = """
@@ -402,7 +472,7 @@ public class Main {
                     llistarTotsLlibres();
                     break;
                 case "En préstec":
-                    // Aqui se pone la función para listar los libros en prestamo
+                    llistarLlibresEnPrestec();
                     break;
                 case "Per autor":
                     // Aqui se pone la función para listar los libros por autor
