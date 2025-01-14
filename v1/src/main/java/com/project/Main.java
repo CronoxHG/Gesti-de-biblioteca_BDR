@@ -12,6 +12,12 @@ import org.json.JSONObject;
 
 public class Main {
 
+    public static void esperarEnter() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Prem Enter per continuar...");
+        scanner.nextLine();
+    }    
+
     public static void clearScreen() {
         try {
             if (System.getProperty("os.name").toLowerCase().contains("win")) {
@@ -213,7 +219,7 @@ public class Main {
     
     public static void modificarLlibreMenu(Scanner scanner) {
         System.out.println("=== Modificar Llibre ===");
-        llistarTotsLlibres();
+        llistarTotsLlibres(false);
         System.out.print("ID del llibre a modificar: ");
         int idLlibre = scanner.nextInt();
         scanner.nextLine(); // Limpiar el buffer después de leer un entero
@@ -259,7 +265,7 @@ public class Main {
     
     public static void esborrarLlibreMenu(Scanner scanner) {
         System.out.println("=== Esborrar Llibre ===");
-        llistarTotsLlibres();
+        llistarTotsLlibres(false);
         System.out.print("ID del llibre a esborrar: ");
         int idLlibre = scanner.nextInt();
         boolean idExisteix = false;
@@ -277,10 +283,10 @@ public class Main {
         scanner.nextLine();
         String resultat = esborrarLlibre(idLlibre);
         System.out.println(resultat);
-        llistarTotsLlibres();
+        llistarTotsLlibres(false);
     }
 
-    public static void llistarTotsLlibres() {
+    public static void llistarTotsLlibres(boolean pausar) {
         String header = String.format("| %-10s | %-30s | %-50s |", "Id Llibre", "Títol", "Autor(s)");
         String separador = "-".repeat(header.length());
         System.out.println(separador);
@@ -308,8 +314,9 @@ public class Main {
             System.out.println(fila);
             System.out.println(separador);
         }
-        Scanner scanner = new Scanner(System.in);
-        scanner.nextLine();
+        if (pausar) {
+            esperarEnter();
+        }
     }
 
     public static void llistarLlibresEnPrestec() {
@@ -349,8 +356,7 @@ public class Main {
                 }
             }
         }
-        Scanner scanner = new Scanner(System.in);
-        scanner.nextLine();
+        esperarEnter();
     }
     
     public static void llistarLlibresPerAutor() {
@@ -382,8 +388,7 @@ public class Main {
             System.out.println(fila);
             System.out.println(separador);
         }
-        Scanner scanner = new Scanner(System.in);
-        scanner.nextLine();
+        esperarEnter();
     }
 
     public static void llistarLlibresPerBusqueda() {
@@ -425,7 +430,7 @@ public class Main {
             scanner.nextLine();
             return;
         }
-        scanner.nextLine();
+        esperarEnter();
     }
 
     public static ArrayList<String> menuLlibres() {
@@ -544,7 +549,7 @@ public class Main {
                 case "Tornar al menú de llibres":
                     return;
                 case "Tots":
-                    llistarTotsLlibres();
+                    llistarTotsLlibres(true);
                     break;
                 case "En préstec":
                     llistarLlibresEnPrestec();

@@ -15,8 +15,18 @@
         "Titol": "Cien años de soledad"
     },
     {
-        "Autor": ["Paco Jimenez"],
-        "Id": 4,
-        "Titol": "Mazinger Z"
+        "Autor": ["Jose Aznar"],
+        "Id": 5,
+        "Titol": "Evangelion"
+    },
+    {
+        "Autor": ["DC Comics"],
+        "Id": 6,
+        "Titol": "Batman Arkham City"
+    },
+    {
+        "Autor": ["Marvel"],
+        "Id": 7,
+        "Titol": "Iron Man Returns"
     }
 ]
