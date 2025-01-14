@@ -719,7 +719,7 @@ public class Main {
             return;
         }
         System.out.println("-".repeat(151));
-        String llibresEnPrestecsActius = "Llistat de préstecs fora de termini";
+        String llibresEnPrestecsActius = "Llistat de préstecs actius";
         Integer padding = 147 - llibresEnPrestecsActius.length();
         Integer espaiEsquerra = padding / 2;
         Integer espaiDreta = padding - espaiEsquerra;
