@@ -16,6 +16,7 @@ public class Main {
     public static String filePathLlibres = "./data/llibres.json";
     public static String filePathUsuaris = "./data/usuaris.json";
     public static LocalDate dataDeAvui = LocalDate.now();
+    public static Scanner scanner = new Scanner(System.in);
 
     public static JSONArray llibres() throws IOException {
         // importar llibres.json
@@ -153,14 +154,12 @@ public class Main {
     }
 
     public static void afegirPrestec() {
-        Scanner scanner = new Scanner(System.in);
         String filePath = "./data/prestecs.json";
         String content = null;
         try {
             content = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
-            scanner.close();
             return;
         }
 
@@ -168,7 +167,6 @@ public class Main {
         // no puc preguntar l'id del prèstec hauria de ser autoincrement.
         System.out.print("Introdueix l'id del llibre que vols: ");// podriem fer-lo també amb títol.
         String idLlibre = scanner.nextLine();
-        scanner.close();
 
         // verificar que el idLlibre es un número.
         try {
@@ -230,7 +228,6 @@ public class Main {
 
         System.out.print("Introdueix l'id del usuari: ");// podriem fer-lo també amb títol.
         String idUsuari = scanner.nextLine();
-        scanner.close();
         try {
             Integer.parseInt(idUsuari);
         } catch (NumberFormatException e) {
@@ -292,17 +289,14 @@ public class Main {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
             return;
         }
-        scanner.close();
     }
 
     public static void esborrarPrestecs() {
-        Scanner scanner = new Scanner(System.in);
         JSONArray prestecs = null;
         try {
             prestecs = prestecs();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
-            scanner.close();
             return;
         }
         // mostrar la llista de llibres en prestec.
@@ -311,7 +305,6 @@ public class Main {
         System.out.print("Inserta l'id del préstec que vols esborrar: ");
         String idEsborrar = scanner.nextLine();
         System.out.println();
-        scanner.close();
 
         if (!digit(idEsborrar)) {
             System.out.println("L'id ha de ser un número.");
@@ -344,13 +337,11 @@ public class Main {
     }
 
     public static void modificarLlibrePrestecs() {
-        Scanner scanner = new Scanner(System.in);
         JSONArray llibres = null;
         try {
             llibres = llibres();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
-            scanner.close();
             return;
         }
 
@@ -359,7 +350,6 @@ public class Main {
             prestecs = prestecs();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
-            scanner.close();
             return;
         }
 
@@ -369,7 +359,6 @@ public class Main {
 
         if (!digit(idPrestec)) {
             System.out.println("L'id del préstec ha de ser un número");
-            scanner.close();
             return;
         }
 
@@ -418,20 +407,20 @@ public class Main {
                         break;
                     case "data devolucio":
                         System.out.print("Inserta una data vàlida (aaaa-mm-dd): ");
-                        String dataDevolucio = scanner.nextLine();
-                        scanner.close();
-                        if (!dataValida(dataDevolucio)) {
-                            System.out.println("La data " + dataDevolucio + " no és vàlida.");
+                        String dataPrestec = scanner.nextLine();
+                        if (!dataValida(dataPrestec)) {
+                            System.out.println("La data " + dataPrestec + " no és vàlida.");
                             return;
                         }
-                        LocalDate dataDevolucioLocal = LocalDate.parse(dataDevolucio);
-                        LocalDate dataGuardada = LocalDate.parse(prestec.getString("dataDevolucio"));
+                        LocalDate dataDevolucioLocal = LocalDate.parse(dataPrestec);
+                        LocalDate dataGuardada = LocalDate.parse(prestec.getString("dataPrestec"));
                         
 
                         if (dataDevolucioLocal.isBefore(dataGuardada)){
                             System.out.println("Has d'inserir una data més gran a la guardada");
+                            return;
                         }
-                        prestec.put("dataDevolucio", dataDevolucio);
+                        prestec.put("dataPrestec", dataPrestec);
                         textoJson = prestecs.toString(4);
                         try {
                             Files.write(Paths.get(filePathPrestecs), textoJson.getBytes());
@@ -487,7 +476,7 @@ public class Main {
                 JSONObject llibre = llibres.getJSONObject(j);
                 for (int k = 0; k < usuaris.length(); k++) {
                     JSONObject usuari = usuaris.getJSONObject(k);
-                    if (prestec.getInt("id") == llibre.getInt("id")) {
+                    if (prestec.getInt("idLlibre") == llibre.getInt("id")) {
                         if (prestec.getInt("idUsuari") == usuari.getInt("id")) {
                             System.out.println("-".repeat(118));
                             System.out.println(String.format("| %-10s | %-35s | %25s | %15s | %17s |",
@@ -503,13 +492,11 @@ public class Main {
     }
 
     public static void llistarPrestecsUsuari() {
-        Scanner scanner = new Scanner(System.in);
         JSONArray prestecs = null;
         try {
             prestecs = prestecs();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
-            scanner.close();
             return;
         }
         JSONArray llibres = null;
@@ -517,7 +504,6 @@ public class Main {
             llibres = llibres();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
-            scanner.close();
             return;
         }
 
@@ -526,13 +512,11 @@ public class Main {
             usuaris = usuaris();
         } catch (IOException e) {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
-            scanner.close();
             return;
         }
 
         System.out.print("Inserta l'id o el nom de l'usuari: ");
         String identificadorUsuari = scanner.nextLine();
-        scanner.close();
 
         Integer idUsuari = null;
         boolean usuariExistent = false;
@@ -896,16 +880,11 @@ public class Main {
         }
     }
 
-    
-    
-
-   
-
     // mvn clean test-compile exec:java -P"runMain"
     // -D"exec.mainClass=com.project.Main"
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
         gestionaMenuPrestecs(scanner);
+        scanner.close();
     }
 
 }
