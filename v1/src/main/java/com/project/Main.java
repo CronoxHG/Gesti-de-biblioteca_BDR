@@ -386,6 +386,48 @@ public class Main {
         scanner.nextLine();
     }
 
+    public static void llistarLlibresPerBusqueda() {
+        Scanner scanner = new Scanner(System.in);
+        String header = String.format("| %-10s | %-30s | %-50s |", "Id Llibre", "Títol", "Autor(s)");
+        String separador = "-".repeat(header.length());
+
+        System.out.print("Introdueix un títol d'un llibre: ");
+        String titolLlibre = scanner.nextLine();
+
+        System.out.println(separador);
+        System.out.println(header);
+        System.out.println(separador);
+        boolean titolExisteix = false;
+        for (int i = 0; i < llibres.length(); i++) {
+            JSONObject llibre = llibres.getJSONObject(i);
+            JSONArray autorsArray = llibre.getJSONArray("Autor");
+            StringBuilder autors = new StringBuilder();
+            for (int j = 0; j < autorsArray.length(); j++) {
+                autors.append(autorsArray.getString(j));
+                if (j < autorsArray.length() - 1) {
+                    autors.append(", "); // Separar múltiples autores con una coma
+                }
+            }
+            if (llibre.getString("Titol").equals(titolLlibre)) {
+                titolExisteix = true;
+                String fila = String.format(
+                "| %-10s | %-30s | %-50s |",
+                llibre.getInt("Id"),
+                llibre.getString("Titol"),
+                autors.toString()
+                );
+                System.out.println(fila);
+                System.out.println(separador);
+            }
+        }
+        if (!titolExisteix) {
+            System.out.println("El títol del llibre '" + titolLlibre + "' no existeix");
+            scanner.nextLine();
+            return;
+        }
+        scanner.nextLine();
+    }
+
     public static ArrayList<String> menuLlibres() {
         String menuText = """
                 Gestió de llibres
@@ -511,7 +553,7 @@ public class Main {
                     llistarLlibresPerAutor();
                     break;
                 case "Cercar títol":
-                    // Aqui se pone la función para listar los libros buscados por titulo
+                    llistarLlibresPerBusqueda();
                     break;
                 default:
                     System.out.println("Opció no vàlida. Torna a intentar-ho");
