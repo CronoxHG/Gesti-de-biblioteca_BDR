@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import org.json.JSONArray;
@@ -150,7 +152,7 @@ public class Main {
         return true;
     }
 
-    public static void afegir_prestec() {
+    public static void afegirPrestec() {
         Scanner scanner = new Scanner(System.in);
         String filePath = "./data/prestecs.json";
         String content = null;
@@ -421,6 +423,13 @@ public class Main {
                         if (!dataValida(dataDevolucio)) {
                             System.out.println("La data " + dataDevolucio + " no és vàlida.");
                             return;
+                        }
+                        LocalDate dataDevolucioLocal = LocalDate.parse(dataDevolucio);
+                        LocalDate dataGuardada = LocalDate.parse(prestec.getString("dataDevolucio"));
+                        
+
+                        if (dataDevolucioLocal.isBefore(dataGuardada)){
+                            System.out.println("Has d'inserir una data més gran a la guardada");
                         }
                         prestec.put("dataDevolucio", dataDevolucio);
                         textoJson = prestecs.toString(4);
@@ -750,69 +759,153 @@ public class Main {
             }
         }
     }
-    public static void gestio_prestecs() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Escull una opció: ");
-        String opc = scanner.nextLine();
-        switch (opc.toLowerCase()) {
-            case "1":
-            case "afegir":
-                afegir_prestec();
-                break;
-            case "2":
-            case "modificar":
-                modificarLlibrePrestecs();
-                break;
-            case "3":
-            case "esborrar":
-                esborrarPrestecs();
-                break;
-            case "4":
-            case "llistar":
-                System.out.print("Escull una opció: ");
-                opc = scanner.nextLine();
-                switch (opc.toLowerCase()) {
-                    case "1":
-                    case "Llistat de préstecs":
-                        llistatDePrestec();
-                        break;
-                    case "2":
-                    case "Llistat de préstecs d'un usuari":
-                        llistarPrestecsUsuari();
-                        break;
-                    case "3":
-                    case "Llistat de llibres en préstec":
-                        llistarLlibresEnPrestec();
-                        break;
-                    case "4":
-                    case "Llistat de préstecs fora de termini":
-                        llistaPrestecsForaDeTermini();
-                        break;
-                    case "5":
-                    case "Llistat de préstecs actius":
-                        llistaPrestecsActius();
-                        break;
-                    // default:
-                    // break;
-                }
-
-                break;
-            case "0":
-            case "sortir":
-                // sortir
-                break;
-            default:
-                System.out.println("Opció invalida.");
-                break;
+    
+    
+    public static void dibuixarLlista(ArrayList<String> llista) {
+        for (String linia : llista) {
+            System.out.println(linia);
         }
-        scanner.close();
     }
+    public static ArrayList<String> menuPrestecs() {
+        String menuText = """
+                Gestió de devolucions
+                1. Afegir
+                2. Modificar
+                3. Eliminar
+                4. Llistar
+                0. Tornar al menú principal
+                """;
+        String[] lines = menuText.split("\\R");
+        return new ArrayList<>(Arrays.asList(lines));
+    }
+
+    public static ArrayList<String> menuLlistarLlibres() {
+        String menuText = """
+                Llistar devolucions
+                1. Tots
+                2. 
+                3. 
+                4. 
+                0. Tornar al menú de llibres
+                """;
+        String[] lines = menuText.split("\\R");
+        return new ArrayList<>(Arrays.asList(lines));
+    }
+
+    public static String obtenerOpcion(Scanner scanner) {
+        ArrayList<String> menu = menuPrestecs();
+    
+        while (true) {
+            System.out.print("Escull una opció: ");
+            String opcio = scanner.nextLine();
+    
+            try {
+                int index = Integer.parseInt(opcio);
+                if (index == 0) {
+                    return "Tornar al menú principal";
+                }
+                else if (index > 0 && index < menu.size() - 1) {
+                    return menu.get(index).substring(3).trim();
+                }
+            }
+            catch (NumberFormatException e) {
+                // Ignorar la excepción y pedir otra entrada
+            }
+    
+            System.out.println("Opció no vàlida. Torna a intentar-ho");
+        }
+    }
+    
+    public static String obtenerOpcionLlistar(Scanner scanner) {
+        ArrayList<String> menu = menuLlistarLlibres();
+
+        while (true) {
+            System.out.print("Escull una opció: ");
+            String opcio = scanner.nextLine();
+
+            try {
+                int index = Integer.parseInt(opcio);
+                if (index == 0) {
+                    return "Tornar al menú de llibres";
+                }
+                else if (index > 0 && index < menu.size() - 1) {
+                    return menu.get(index).substring(3).trim();
+                }
+            }
+            catch (NumberFormatException e) {
+                // Ignorar la excepción y pedir otra entrada
+            }
+
+            System.out.println("Opció no vàlida. Torna a intentar-ho");
+        }
+    }
+
+    public static void gestionaMenuPrestecs(Scanner scanner) {
+        ArrayList<String> menuPrestecs = menuPrestecs();
+    
+        while (true) {
+            // clearScreen();
+            dibuixarLlista(menuPrestecs);
+    
+            String opcio = obtenerOpcion(scanner);
+            switch (opcio) {
+                case "Tornar al menú principal":
+                    return;
+                case "Afegir":
+                    afegirPrestec();
+                    break;
+                case "Modificar":
+                    modificarLlibrePrestecs();
+                    break;
+                case "Eliminar":
+                    esborrarPrestecs();
+                    break;
+                case "Llistar":
+                    gestionaMenuPrestecsLlistar(scanner);
+                    break;
+                default:
+                    System.out.println("Opció no vàlida. Torna a intentar-ho");
+            }
+        }
+    }
+    
+    public static void gestionaMenuPrestecsLlistar(Scanner scanner) {
+
+        ArrayList<String> menuLlistarLlibres = menuLlistarLlibres();
+
+        while (true) {
+            // clearScreen();
+            dibuixarLlista(menuLlistarLlibres);
+
+            String opcio = obtenerOpcionLlistar(scanner);
+            switch (opcio) {
+                case "Tornar al menú de llibres":
+                    return;
+                case "Tots":
+                    llistarLlibresEnPrestec();
+                    break;
+                case "prestecs fora de termini":
+                    llistaPrestecsForaDeTermini();
+                    break;
+                case "prestecs actius":
+                    llistaPrestecsActius();
+                    break;
+                default:
+                    System.out.println("Opció no vàlida. Torna a intentar-ho");
+            }
+        }
+    }
+
+    
+    
+
+   
 
     // mvn clean test-compile exec:java -P"runMain"
     // -D"exec.mainClass=com.project.Main"
     public static void main(String[] args) {
-        System.out.println("Hello world!");
-        gestio_prestecs();
+        Scanner scanner = new Scanner(System.in);
+        gestionaMenuPrestecs(scanner);
     }
 
 }

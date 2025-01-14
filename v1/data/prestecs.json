@@ -1,24 +1,16 @@
 [
     {
-      "id": 1,
-      "idLlibre": 2,
-      "idUsuari": 1,
-      "dataPrestec": "2025-01-01",
-      "dataDevolucio": "2025-01-08"
+        "dataDevolucio": "2025-01-10",
+        "dataPrestec": "2025-01-03",
+        "idLlibre": 3,
+        "id": 2,
+        "idUsuari": 2
     },
     {
-      "id": 2,
-      "idLlibre": 3,
-      "idUsuari": 2,
-      "dataPrestec": "2025-01-03",
-      "dataDevolucio": "2025-01-10"
-    },
-    {
-      "id": 3,
-      "idLlibre": 1,
-      "idUsuari": 3,
-      "dataPrestec": "2025-01-05",
-      "dataDevolucio": "2025-01-12"
+        "dataDevolucio": "2025-01-12",
+        "dataPrestec": "2025-01-05",
+        "idLlibre": 1,
+        "id": 3,
+        "idUsuari": 3
     }
-  ]
-  
+]
