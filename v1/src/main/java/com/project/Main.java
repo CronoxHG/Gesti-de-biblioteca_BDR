@@ -5,8 +5,10 @@ import java.util.*;
 
 public class Main {
 
-    public static void dibuixarLlista() {
-        
+    public static void dibuixarLlista(ArrayList<String> llista) {
+        for (String linia : llista) {
+            System.out.println(linia);
+        }
     }
 
     public static ArrayList<String> menuPrincipal() {
@@ -49,12 +51,11 @@ public class Main {
         ArrayList<String> menuLlibres = menuPrincipal();
     
         while (true) {
-            clearScreen();
             dibuixarLlista(menuLlibres);
     
             String opcio = obtenerOpcion(scanner);
             switch (opcio) {
-                case "Tornar al menú principal":
+                case "Sortir":
                     return;
                 case "Llibres":
                     // Aquí se llama a la funcion para ir a Libros
