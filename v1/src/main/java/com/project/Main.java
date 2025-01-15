@@ -290,7 +290,6 @@ public class Main {
     }
 
     public static void llistarTotsLlibres(boolean pausar) {
-    public static void llistarTotsLlibres(boolean pausar) {
         String header = String.format("| %-10s | %-30s | %-50s |", "Id Llibre", "Títol", "Autor(s)");
         String separador = "-".repeat(header.length());
         System.out.println(separador);
