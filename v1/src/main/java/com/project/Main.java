@@ -220,6 +220,7 @@ public class Main {
     public static void modificarLlibreMenu(Scanner scanner) {
         System.out.println("=== Modificar Llibre ===");
         llistarTotsLlibres(false);
+        llistarTotsLlibres(false);
         System.out.print("ID del llibre a modificar: ");
         int idLlibre = scanner.nextInt();
         scanner.nextLine(); // Limpiar el buffer después de leer un entero
@@ -266,6 +267,7 @@ public class Main {
     public static void esborrarLlibreMenu(Scanner scanner) {
         System.out.println("=== Esborrar Llibre ===");
         llistarTotsLlibres(false);
+        llistarTotsLlibres(false);
         System.out.print("ID del llibre a esborrar: ");
         int idLlibre = scanner.nextInt();
         boolean idExisteix = false;
@@ -284,8 +286,10 @@ public class Main {
         String resultat = esborrarLlibre(idLlibre);
         System.out.println(resultat);
         llistarTotsLlibres(false);
+        llistarTotsLlibres(false);
     }
 
+    public static void llistarTotsLlibres(boolean pausar) {
     public static void llistarTotsLlibres(boolean pausar) {
         String header = String.format("| %-10s | %-30s | %-50s |", "Id Llibre", "Títol", "Autor(s)");
         String separador = "-".repeat(header.length());
@@ -549,6 +553,7 @@ public class Main {
                 case "Tornar al menú de llibres":
                     return;
                 case "Tots":
+                    llistarTotsLlibres(true);
                     llistarTotsLlibres(true);
                     break;
                 case "En préstec":
