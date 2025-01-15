@@ -45,6 +45,9 @@ public class Main {
                 return false;
             }
         }
+        if (num == ""){
+            return false;
+        }
         return true;
     }
 
@@ -248,7 +251,7 @@ public class Main {
             try {
                 throw new RuntimeException();
             } catch (RuntimeException e) {
-                System.out.println("El llibre amb id " + idLlibreInteger + " ja està prestat.");
+                System.out.println("Aquest usuari no pot tenir més llibres en préstec");
                 return;
             }
         }
@@ -417,10 +420,10 @@ public class Main {
                         
 
                         if (dataDevolucioLocal.isBefore(dataGuardada)){
-                            System.out.println("Has d'inserir una data més gran a la guardada");
+                            System.out.println("Has d'inserir una data més gran a la guardada (data préstec)");
                             return;
                         }
-                        prestec.put("dataPrestec", dataPrestec);
+                        prestec.put("dataDevolucio", dataPrestec);
                         textoJson = prestecs.toString(4);
                         try {
                             Files.write(Paths.get(filePathPrestecs), textoJson.getBytes());
@@ -654,6 +657,12 @@ public class Main {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
             return;
         }
+
+        if (prestecs.isEmpty()){
+            System.out.println("No hi han préstecs per llistar");
+            return;
+        }
+
         System.out.println("-".repeat(151));
         String llibresEnPrestecsForaTermini = "Llistat de préstecs fora de termini";
         Integer padding = 147 - llibresEnPrestecsForaTermini.length();
@@ -766,62 +775,15 @@ public class Main {
     public static ArrayList<String> menuLlistarLlibres() {
         String menuText = """
                 Llistar devolucions
-                1. Tots
-                2. 
-                3. 
-                4. 
+                1. Tots els préstecs
+                2. Préstecs fora de termini
+                3. Préstecs actius
+                4. Préstecs per usuari
+                5. Llibres en préstec
                 0. Tornar al menú de llibres
                 """;
         String[] lines = menuText.split("\\R");
         return new ArrayList<>(Arrays.asList(lines));
-    }
-
-    public static String obtenerOpcion(Scanner scanner) {
-        ArrayList<String> menu = menuPrestecs();
-    
-        while (true) {
-            System.out.print("Escull una opció: ");
-            String opcio = scanner.nextLine();
-    
-            try {
-                int index = Integer.parseInt(opcio);
-                if (index == 0) {
-                    return "Tornar al menú principal";
-                }
-                else if (index > 0 && index < menu.size() - 1) {
-                    return menu.get(index).substring(3).trim();
-                }
-            }
-            catch (NumberFormatException e) {
-                // Ignorar la excepción y pedir otra entrada
-            }
-    
-            System.out.println("Opció no vàlida. Torna a intentar-ho");
-        }
-    }
-    
-    public static String obtenerOpcionLlistar(Scanner scanner) {
-        ArrayList<String> menu = menuLlistarLlibres();
-
-        while (true) {
-            System.out.print("Escull una opció: ");
-            String opcio = scanner.nextLine();
-
-            try {
-                int index = Integer.parseInt(opcio);
-                if (index == 0) {
-                    return "Tornar al menú de llibres";
-                }
-                else if (index > 0 && index < menu.size() - 1) {
-                    return menu.get(index).substring(3).trim();
-                }
-            }
-            catch (NumberFormatException e) {
-                // Ignorar la excepción y pedir otra entrada
-            }
-
-            System.out.println("Opció no vàlida. Torna a intentar-ho");
-        }
     }
 
     public static void gestionaMenuPrestecs(Scanner scanner) {
@@ -831,20 +793,27 @@ public class Main {
             // clearScreen();
             dibuixarLlista(menuPrestecs);
     
-            String opcio = obtenerOpcion(scanner);
-            switch (opcio) {
-                case "Tornar al menú principal":
+            System.out.print("Escull una opció: ");
+            String opcio = scanner.nextLine();
+
+            switch (opcio.toLowerCase().replace("ú", "u")) {
+                case "0":
+                case "tornar al menu principal":
                     return;
-                case "Afegir":
+                case "1":
+                case "afegir":
                     afegirPrestec();
                     break;
-                case "Modificar":
+                case "2":
+                case "modificar":
                     modificarLlibrePrestecs();
                     break;
-                case "Eliminar":
+                case "3":
+                case "eliminar":
                     esborrarPrestecs();
                     break;
-                case "Llistar":
+                case "4":
+                case "llistar":
                     gestionaMenuPrestecsLlistar(scanner);
                     break;
                 default:
@@ -861,18 +830,32 @@ public class Main {
             // clearScreen();
             dibuixarLlista(menuLlistarLlibres);
 
-            String opcio = obtenerOpcionLlistar(scanner);
-            switch (opcio) {
-                case "Tornar al menú de llibres":
+            System.out.print("Escull una opció: ");
+            String opcio = scanner.nextLine();
+
+            switch (opcio.toLowerCase().replace("ú", "u").replace("é", "e").replace("è", "e")) {
+                case "0":
+                case "tornar al menu de prestecs":
                     return;
-                case "Tots":
+                case "tots els prestecs":
+                case "1":
                     llistarLlibresEnPrestec();
                     break;
+                case "2":
                 case "prestecs fora de termini":
                     llistaPrestecsForaDeTermini();
                     break;
+                case "3":
                 case "prestecs actius":
                     llistaPrestecsActius();
+                    break;
+                case "4":
+                case "prestecs per usuari":
+                    llistarPrestecsUsuari();
+                    break;
+                case "5":
+                case "llibres en prestec":
+                    llistarLlibresEnPrestec();
                     break;
                 default:
                     System.out.println("Opció no vàlida. Torna a intentar-ho");
