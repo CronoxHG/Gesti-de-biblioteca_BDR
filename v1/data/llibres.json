@@ -1,22 +1,32 @@
 [
     {
-        "Autor": ["Antoine de Saint-Exupéry"],
-        "Id": 1,
-        "Titol": "El Petit Príncep"
+        "titol": "El Petit Príncep",
+        "id": 1,
+        "autor": ["Antoine de Saint-Exupéry"]
     },
     {
-        "Autor": ["George Orwell"],
-        "Id": 2,
-        "Titol": "1984"
+        "titol": "1984",
+        "id": 2,
+        "autor": ["George Orwell"]
     },
     {
-        "Autor": ["Gabriel García Márquez"],
-        "Id": 3,
-        "Titol": "Cien años de soledad"
+        "titol": "Cien años de soledad",
+        "id": 3,
+        "autor": ["Gabriel García Márquez"]
     },
     {
-        "Autor": ["Paco Jimenez"],
-        "Id": 4,
-        "Titol": "Mazinger Z"
+        "titol": "Evangelion",
+        "id": 5,
+        "autor": ["Jose Aznar"]
+    },
+    {
+        "titol": "Capitan America",
+        "id": 7,
+        "autor": ["Marvel"]
+    },
+    {
+        "titol": "Cortar por la linea de puntos",
+        "id": 8,
+        "autor": ["Jose Jimenez"]
     }
 ]

@@ -1,5 +1,6 @@
 package com.project;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Prem Enter per continuar...");
         scanner.nextLine();
-    }
+    }    
 
     public static void clearScreen() {
         try {
@@ -44,6 +45,34 @@ public class Main {
         }
     }
 
+    public static JSONArray usuaris;
+    // Inicialización del JSONArray
+    static {
+        usuaris = new JSONArray();
+        try {
+            // Leer el contenido del archivo JSON
+            String filePath = "./data/usuaris.json";
+            String content = new String(Files.readAllBytes(Paths.get(filePath)));
+            usuaris = new JSONArray(content);
+        } catch (IOException e) {
+            System.out.println("No s'ha pogut llegir el fitxer de llibres. Inicialitzant amb un JSONArray buit.");
+        }
+    }
+
+    public static JSONArray prestecs;
+    // Inicialización del JSONArray
+    static {
+        prestecs = new JSONArray();
+        try {
+            // Leer el contenido del archivo JSON
+            String filePath = "./data/prestecs.json";
+            String content = new String(Files.readAllBytes(Paths.get(filePath)));
+            prestecs = new JSONArray(content);
+        } catch (IOException e) {
+            System.out.println("No s'ha pogut llegir el fitxer de llibres. Inicialitzant amb un JSONArray buit.");
+        }
+    }
+
     public static String guardarLlibres(String filePath) {
         try {
             Files.write(Paths.get(filePath), llibres.toString(4).getBytes());
@@ -62,7 +91,7 @@ public class Main {
     public static int calcularNouId() {
         int maxId = 0;
         for (int i = 0; i < llibres.length(); i++) {
-            maxId = Math.max(maxId, llibres.getJSONObject(i).getInt("Id"));
+            maxId = Math.max(maxId, llibres.getJSONObject(i).getInt("id"));
         }
         return maxId + 1;
     }
@@ -78,9 +107,9 @@ public class Main {
         autorsArray.put(nomAutor); // Afegir el nom de l'autor com un element del array
     
         // Configurar els valors del llibre nou
-        nouLlibre.put("Id", nouId);
-        nouLlibre.put("Titol", nomLlibre);
-        nouLlibre.put("Autor", autorsArray); // Afegir l'array d'autors
+        nouLlibre.put("id", nouId);
+        nouLlibre.put("titol", nomLlibre);
+        nouLlibre.put("autor", autorsArray); // Afegir l'array d'autors
     
         // Afegir el llibre a la llista de llibres
         llibres.put(nouLlibre);
@@ -93,7 +122,7 @@ public class Main {
     public static String modificarLlibre(int idLlibre, String camp, Object nouValor) {
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
-            if (llibre.getInt("Id") == idLlibre) {
+            if (llibre.getInt("id") == idLlibre) {
                 if (llibre.has(camp)) {
                     llibre.put(camp, nouValor);
                     return guardarLlibres("./data/llibres.json");
@@ -108,7 +137,7 @@ public class Main {
     public static String esborrarLlibre(int idLlibre) {
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
-            if (llibre.getInt("Id") == idLlibre) {
+            if (llibre.getInt("id") == idLlibre) {
                 llibres.remove(i);
                 return guardarLlibres("./data/llibres.json");
             }
@@ -191,6 +220,7 @@ public class Main {
     public static void modificarLlibreMenu(Scanner scanner) {
         System.out.println("=== Modificar Llibre ===");
         llistarTotsLlibres(false);
+        llistarTotsLlibres(false);
         System.out.print("ID del llibre a modificar: ");
         int idLlibre = scanner.nextInt();
         scanner.nextLine(); // Limpiar el buffer después de leer un entero
@@ -199,7 +229,7 @@ public class Main {
         JSONObject llibreSeleccionat = null;
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
-            if (llibre.getInt("Id") == idLlibre) {
+            if (llibre.getInt("id") == idLlibre) {
                 llibreSeleccionat = llibre;
                 break;
             }
@@ -221,12 +251,12 @@ public class Main {
         // Manejar la modificación del campo
         if (camp.equals("Titol")) {
             String nouTitol = llegirNomLlibre(scanner);
-            llibreSeleccionat.put("Titol", nouTitol);
+            llibreSeleccionat.put("titol", nouTitol);
         } else if (camp.equals("Autor")) {
             String autorsInput = llegirNomAutor(scanner);
             String[] autorsArray = autorsInput.split(",\\s*"); // Separar autores por comas
             JSONArray nousAutors = new JSONArray(List.of(autorsArray));
-            llibreSeleccionat.put("Autor", nousAutors);
+            llibreSeleccionat.put("autor", nousAutors);
         }
     
         // Guardar los cambios en el archivo
@@ -237,12 +267,13 @@ public class Main {
     public static void esborrarLlibreMenu(Scanner scanner) {
         System.out.println("=== Esborrar Llibre ===");
         llistarTotsLlibres(false);
+        llistarTotsLlibres(false);
         System.out.print("ID del llibre a esborrar: ");
         int idLlibre = scanner.nextInt();
         boolean idExisteix = false;
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
-            if (llibre.getInt("Id") == idLlibre) {
+            if (llibre.getInt("id") == idLlibre) {
                 idExisteix = true;
                 break;
             }
@@ -255,6 +286,7 @@ public class Main {
         String resultat = esborrarLlibre(idLlibre);
         System.out.println(resultat);
         llistarTotsLlibres(false);
+        llistarTotsLlibres(false);
     }
 
     public static void llistarTotsLlibres(boolean pausar) {
@@ -266,7 +298,7 @@ public class Main {
 
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
-            JSONArray autorsArray = llibre.getJSONArray("Autor");
+            JSONArray autorsArray = llibre.getJSONArray("autor");
             StringBuilder autors = new StringBuilder();
             for (int j = 0; j < autorsArray.length(); j++) {
                 autors.append(autorsArray.getString(j));
@@ -278,8 +310,8 @@ public class Main {
             // Crear fila para el libro
             String fila = String.format(
                 "| %-10s | %-30s | %-50s |",
-                llibre.getInt("Id"),
-                llibre.getString("Titol"),
+                llibre.getInt("id"),
+                llibre.getString("titol"),
                 autors.toString()
             );
             System.out.println(fila);
@@ -289,7 +321,121 @@ public class Main {
             esperarEnter();
         }
     }
+
+    public static void llistarLlibresEnPrestec() {
+        JSONArray llibresLlistar = llibres;
+        JSONArray usuarisLlistar = usuaris;
+        JSONArray prestecsLlistar = prestecs;
     
+        System.out.println("-".repeat(166));
+        String llibresEnPrestecs = "Llibres en prèstecs";
+        int padding = 162 - llibresEnPrestecs.length();
+        int espaiEsquerra = padding / 2;
+        int espaiDreta = padding - espaiEsquerra;
+        System.out.println("| " + " ".repeat(espaiEsquerra) + llibresEnPrestecs + " ".repeat(espaiDreta) + " |");
+        System.out.println("-".repeat(166));
+        System.out.println(String.format("| %-8s | %-35s | %-35s | %35s | %12s | %12s |", "Id Prestec", "Nom i cognoms",
+                "Títol del Llibre", "Autor/Autors", "Data de prèstec", "Data de devolució"));
+        System.out.println("-".repeat(166));
+    
+        for (int i = 0; i < llibresLlistar.length(); i++) {
+            JSONObject llibre = llibresLlistar.getJSONObject(i);
+            for (int j = 0; j < prestecsLlistar.length(); j++) {
+                JSONObject prestec = prestecsLlistar.getJSONObject(j);
+                for (int k = 0; k < usuarisLlistar.length(); k++) {
+                    JSONObject usuari = usuarisLlistar.getJSONObject(k);
+                    if (llibre.getInt("id") == prestec.getInt("idLlibre")) {
+                        if (usuari.getInt("id") == prestec.getInt("idUsuari")) {
+                            System.out.println(String.format("| %-10s | %-35s | %-35s | %35s | %15s | %17s |",
+                                    prestec.getInt("id"),
+                                    usuari.getString("Nom") + " " + usuari.getString("Cognoms"),
+                                    llibre.getString("titol"),
+                                    llibre.getJSONArray("autor").join(", "),
+                                    prestec.getString("dataPrestec"),
+                                    prestec.getString("dataDevolucio")));
+                            System.out.println("-".repeat(166));
+                        }
+                    }
+                }
+            }
+        }
+        esperarEnter();
+    }
+    
+    public static void llistarLlibresPerAutor() {
+        HashMap<String, List<JSONObject>> autorsMap = new HashMap<>();
+
+        String header = String.format("| %-50s | %-30s | %-10s |", "Autor(s)", "Títol", "Id Llibre");
+        String separador = "-".repeat(header.length());
+        System.out.println(separador);
+        System.out.println(header);
+        System.out.println(separador);
+        
+        for (int i = 0; i < llibres.length(); i++) {
+            JSONObject llibre = llibres.getJSONObject(i);
+            JSONArray autorsArray = llibre.getJSONArray("autor");
+            
+            for (int j = 0; j < autorsArray.length(); j++) {
+                String autor = autorsArray.getString(j);
+
+                autorsMap.putIfAbsent(autor, new ArrayList<>());
+                autorsMap.get(autor).add(llibre);
+            }
+
+            String fila = String.format(
+                "| %-50s | %-30s | %-10s |",
+                autorsArray.toString(),
+                llibre.getString("titol"),
+                llibre.getInt("id")
+            );
+            System.out.println(fila);
+            System.out.println(separador);
+        }
+        esperarEnter();
+    }
+
+    public static void llistarLlibresPerBusqueda() {
+        Scanner scanner = new Scanner(System.in);
+        String header = String.format("| %-10s | %-30s | %-50s |", "Id Llibre", "Títol", "Autor(s)");
+        String separador = "-".repeat(header.length());
+
+        System.out.print("Introdueix un títol d'un llibre: ");
+        String titolLlibre = scanner.nextLine();
+
+        System.out.println(separador);
+        System.out.println(header);
+        System.out.println(separador);
+        boolean titolExisteix = false;
+        for (int i = 0; i < llibres.length(); i++) {
+            JSONObject llibre = llibres.getJSONObject(i);
+            JSONArray autorsArray = llibre.getJSONArray("autor");
+            StringBuilder autors = new StringBuilder();
+            for (int j = 0; j < autorsArray.length(); j++) {
+                autors.append(autorsArray.getString(j));
+                if (j < autorsArray.length() - 1) {
+                    autors.append(", "); // Separar múltiples autores con una coma
+                }
+            }
+            if (llibre.getString("titol").contains(titolLlibre)) {
+                titolExisteix = true;
+                String fila = String.format(
+                "| %-10s | %-30s | %-50s |",
+                llibre.getInt("id"),
+                llibre.getString("titol"),
+                autors.toString()
+                );
+                System.out.println(fila);
+                System.out.println(separador);
+            }
+        }
+        if (!titolExisteix) {
+            System.out.println("El títol del llibre '" + titolLlibre + "' no existeix");
+            scanner.nextLine();
+            return;
+        }
+        esperarEnter();
+    }
+
     public static ArrayList<String> menuLlibres() {
         String menuText = """
                 Gestió de llibres
@@ -407,15 +553,16 @@ public class Main {
                     return;
                 case "Tots":
                     llistarTotsLlibres(true);
+                    llistarTotsLlibres(true);
                     break;
                 case "En préstec":
-                    // Aqui se pone la función para listar los libros en prestamo
+                    llistarLlibresEnPrestec();
                     break;
                 case "Per autor":
-                    // Aqui se pone la función para listar los libros por autor
+                    llistarLlibresPerAutor();
                     break;
                 case "Cercar títol":
-                    // Aqui se pone la función para listar los libros buscados por titulo
+                    llistarLlibresPerBusqueda();
                     break;
                 default:
                     System.out.println("Opció no vàlida. Torna a intentar-ho");
