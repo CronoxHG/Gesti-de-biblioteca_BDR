@@ -18,6 +18,24 @@ public class Main {
     public static LocalDate dataDeAvui = LocalDate.now();
     public static Scanner scanner = new Scanner(System.in);
 
+    public static void esperarEnter() {
+        System.out.println("Prem Enter per continuar...");
+        scanner.nextLine();
+    }    
+
+    public static void clearScreen() {
+        try {
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static JSONArray llibres() throws IOException {
         // importar llibres.json
         String contentLlibres = new String(Files.readAllBytes(Paths.get(filePathLlibres)));
@@ -303,7 +321,7 @@ public class Main {
             return;
         }
         // mostrar la llista de llibres en prestec.
-        llistarLlibresEnPrestec();
+        llistarPrestecs();
 
         System.out.print("Inserta l'id del préstec que vols esborrar: ");
         String idEsborrar = scanner.nextLine();
@@ -326,7 +344,7 @@ public class Main {
                     System.out.println("Ha surgit un error inesperat en el fitxer.");
                     return;
                 }
-                llistarLlibresEnPrestec();
+                llistarPrestecs();
                 System.out.println();
                 System.out.println("S'ha esborrar el préstec.");
                 return;
@@ -365,10 +383,11 @@ public class Main {
             return;
         }
 
+        boolean existeixPrestec = false;
         for (int i = 0; i < prestecs.length(); i++) {
             JSONObject prestec = prestecs.getJSONObject(i);
-
             if (Integer.parseInt(idPrestec) == prestec.getInt("id")) {
+                existeixPrestec = true;
                 System.out.print("Camp a modificar (Llibre/Data devolucio): ");
                 String opc = scanner.nextLine();
                 switch (opc.toLowerCase().trim().replace('ó', 'o')) {
@@ -442,7 +461,10 @@ public class Main {
                 System.out.println("S'ha canviat correctament");
 
             }
-
+        }
+        if (!existeixPrestec){
+            System.out.println("El préstec amb l'id "+idPrestec + " no existeix.");
+            return;
         }
     }
 
@@ -469,8 +491,14 @@ public class Main {
             System.out.println("Ha surgit un error inesperat en el fitxer.");
             return;
         }
-
         System.out.println("-".repeat(118));
+        String llibresEnPrestecs = "Llista de préstecs";
+        Integer padding = 114 - llibresEnPrestecs.length();
+        Integer espaiEsquerra = padding / 2;
+        Integer espaiDreta = padding - espaiEsquerra;
+        System.out.println("| " + " ".repeat(espaiEsquerra) + llibresEnPrestecs + " ".repeat(espaiDreta) + " |");
+        System.out.println("-".repeat(118));
+        
         System.out.println(String.format("| %-8s | %-35s | %25s | %12s | %12s |", "Id Prestec", "Títol del Llibre",
                 "Nom i cognoms", "Data de prèstec", "Data de devolució"));
         for (int i = 0; i < prestecs.length(); i++) {
@@ -569,12 +597,14 @@ public class Main {
             }
         }
         if (noTePrestesc) {
-            System.out.println("L'usuari amb id " + idUsuari + " no té prèstecs.");
+            System.out.println();
+            System.out.println("Aquest usuari no té préstecs.");
+            System.out.println();
             return;
         }
     }
 
-    public static void llistarLlibresEnPrestec() {
+    public static void llistarPrestecs() {
         JSONArray llibres = null;
         try {
             llibres = llibres();
@@ -600,7 +630,7 @@ public class Main {
         }
 
         System.out.println("-".repeat(166));
-        String llibresEnPrestecs = "Llibres en prèstecs";
+        String llibresEnPrestecs = "Tots els préstecs";
         Integer padding = 162 - llibresEnPrestecs.length();
         Integer espaiEsquerra = padding / 2;
         Integer espaiDreta = padding - espaiEsquerra;
@@ -618,13 +648,70 @@ public class Main {
                     JSONObject usuari = usuaris.getJSONObject(k);
                     if (llibre.getInt("id") == prestec.getInt("idLlibre")) {
                         if (usuari.getInt("id") == prestec.getInt("idUsuari")) {
+                            String autoresJoin = llibre.getJSONArray("autor").join(", ");
                             System.out.println(String.format("| %-10s | %-35s | %-35s | %35s | %15s | %17s |",
                                     prestec.getInt("id"),
                                     usuari.getString("nom") + " " + usuari.getString("cognoms"),
                                     llibre.getString("titol"),
-                                    llibre.getJSONArray("autor").join(", "), prestec.getString("dataPrestec"),
+                                    autoresJoin.length() > 35 ? autoresJoin.substring(0,35) : autoresJoin,
+                                    prestec.getString("dataPrestec"),
                                     prestec.getString("dataDevolucio")));
                             System.out.println("-".repeat(166));
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    public static void llistarLlibresEnPrestec() {
+        JSONArray llibres = null;
+        try {
+            llibres = llibres();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            return;
+        }
+
+        JSONArray usuaris = null;
+        try {
+            usuaris = usuaris();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            return;
+        }
+
+        JSONArray prestecs = null;
+        try {
+            prestecs = prestecs();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer.");
+            return;
+        }
+
+        System.out.println("-".repeat(90));
+        String llibresEnPrestecs = "Llibres en préstecs";
+        Integer padding = 86 - llibresEnPrestecs.length();
+        Integer espaiEsquerra = padding / 2;
+        Integer espaiDreta = padding - espaiEsquerra;
+        System.out.println("| " + " ".repeat(espaiEsquerra) + llibresEnPrestecs + " ".repeat(espaiDreta) + " |");
+        System.out.println("-".repeat(90));
+        System.out.println(String.format("| %-10s | %-35s | %35s |", "Id Llibre", "Títol del Llibre", "Autor/Autors"));
+        System.out.println("-".repeat(90));
+        for (int i = 0; i < llibres.length(); i++) {
+            JSONObject llibre = llibres.getJSONObject(i);
+            for (int j = 0; j < prestecs.length(); j++) {
+                JSONObject prestec = prestecs.getJSONObject(j);
+                for (int k = 0; k < usuaris.length(); k++) {
+                    JSONObject usuari = usuaris.getJSONObject(k);
+                    if (llibre.getInt("id") == prestec.getInt("idLlibre")) {
+                        if (usuari.getInt("id") == prestec.getInt("idUsuari")) {
+                            String autoresJoin = llibre.getJSONArray("autor").join(", ");
+                            System.out.println(String.format("| %-10s | %-35s | %35s |",
+                                    llibre.getInt("id"),
+                                    llibre.getString("titol"),
+                                    autoresJoin.length() > 35 ? autoresJoin.substring(0,35) : autoresJoin));
+                            System.out.println("-".repeat(90));
                         }
                     }
                 }
@@ -790,11 +877,12 @@ public class Main {
         ArrayList<String> menuPrestecs = menuPrestecs();
     
         while (true) {
-            // clearScreen();
+            clearScreen();
             dibuixarLlista(menuPrestecs);
     
             System.out.print("Escull una opció: ");
             String opcio = scanner.nextLine();
+            clearScreen();
 
             switch (opcio.toLowerCase().replace("ú", "u")) {
                 case "0":
@@ -803,14 +891,17 @@ public class Main {
                 case "1":
                 case "afegir":
                     afegirPrestec();
+                    esperarEnter();
                     break;
                 case "2":
                 case "modificar":
                     modificarLlibrePrestecs();
+                    esperarEnter();
                     break;
                 case "3":
                 case "eliminar":
                     esborrarPrestecs();
+                    esperarEnter();
                     break;
                 case "4":
                 case "llistar":
@@ -818,6 +909,7 @@ public class Main {
                     break;
                 default:
                     System.out.println("Opció no vàlida. Torna a intentar-ho");
+                    esperarEnter();
             }
         }
     }
@@ -827,19 +919,19 @@ public class Main {
         ArrayList<String> menuLlistarLlibres = menuLlistarLlibres();
 
         while (true) {
-            // clearScreen();
+            clearScreen();
             dibuixarLlista(menuLlistarLlibres);
 
             System.out.print("Escull una opció: ");
             String opcio = scanner.nextLine();
-
+            clearScreen();
             switch (opcio.toLowerCase().replace("ú", "u").replace("é", "e").replace("è", "e")) {
                 case "0":
                 case "tornar al menu de prestecs":
                     return;
                 case "tots els prestecs":
                 case "1":
-                    llistarLlibresEnPrestec();
+                    llistarPrestecs();
                     break;
                 case "2":
                 case "prestecs fora de termini":
@@ -860,6 +952,7 @@ public class Main {
                 default:
                     System.out.println("Opció no vàlida. Torna a intentar-ho");
             }
+            esperarEnter();
         }
     }
 
