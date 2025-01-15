@@ -11,8 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
 
-import java.util.*;
-
 public class Main {
 
     public static void esperarEnter() {
@@ -439,6 +437,18 @@ public class Main {
         esperarEnter();
     }
 
+    public static ArrayList<String> menuPrincipal() {
+        String menuText = """
+                Gestió de biblioteca
+                1. Llibres
+                2. Usuaris
+                3. Préstecs
+                0. Sortir
+                """;
+        String[] lines = menuText.split("\\R");
+        return new ArrayList<>(Arrays.asList(lines));
+    }
+
     public static ArrayList<String> menuLlibres() {
         String menuText = """
                 Gestió de llibres
@@ -463,6 +473,30 @@ public class Main {
                 """;
         String[] lines = menuText.split("\\R");
         return new ArrayList<>(Arrays.asList(lines));
+    }
+
+    public static String obtenerOpcionPrincipal(Scanner scanner) {
+        ArrayList<String> menu = menuPrincipal();
+    
+        while (true) {
+            System.out.print("Escull una opció: ");
+            String opcio = scanner.nextLine();
+    
+            try {
+                int index = Integer.parseInt(opcio);
+                if (index == 0) {
+                    return "Sortir";
+                }
+                else if (index > 0 && index < menu.size() - 1) {
+                    return menu.get(index).substring(3).trim();
+                }
+            }
+            catch (NumberFormatException e) {
+                // Ignorar la excepción y pedir otra entrada
+            }
+    
+            System.out.println("Opció no vàlida. Torna a intentar-ho");
+        }
     }
 
     public static String obtenerOpcion(Scanner scanner) {
@@ -556,7 +590,6 @@ public class Main {
                     return;
                 case "Tots":
                     llistarTotsLlibres(true);
-                    llistarTotsLlibres(true);
                     break;
                 case "En préstec":
                     llistarLlibresEnPrestec();
@@ -572,63 +605,20 @@ public class Main {
             }
         }
     }
-    
-
-
-    public static void dibuixarLlista(ArrayList<String> llista) {
-        for (String linia : llista) {
-            System.out.println(linia);
-        }
-    }
-
-    public static ArrayList<String> menuPrincipal() {
-        String menuText = """
-                Gestió de biblioteca
-                1. Llibres
-                2. Usuaris
-                3. Préstecs
-                0. Sortir
-                """;
-        String[] lines = menuText.split("\\R");
-        return new ArrayList<>(Arrays.asList(lines));
-    }
-
-    public static String obtenerOpcion(Scanner scanner) {
-        ArrayList<String> menu = menuPrincipal();
-    
-        while (true) {
-            System.out.print("Escull una opció: ");
-            String opcio = scanner.nextLine();
-    
-            try {
-                int index = Integer.parseInt(opcio);
-                if (index == 0) {
-                    return "Sortir";
-                }
-                else if (index > 0 && index < menu.size() - 1) {
-                    return menu.get(index).substring(3).trim();
-                }
-            }
-            catch (NumberFormatException e) {
-                // Ignorar la excepción y pedir otra entrada
-            }
-    
-            System.out.println("Opció no vàlida. Torna a intentar-ho");
-        }
-    }
 
     public static void gestionaMenuPrincipal(Scanner scanner) {
-        ArrayList<String> menuLlibres = menuPrincipal();
+        ArrayList<String> menuPrincipal = menuPrincipal();
     
         while (true) {
-            dibuixarLlista(menuLlibres);
+            clearScreen();
+            dibuixarLlista(menuPrincipal);
     
-            String opcio = obtenerOpcion(scanner);
+            String opcio = obtenerOpcionPrincipal(scanner);
             switch (opcio) {
                 case "Sortir":
                     return;
                 case "Llibres":
-                    // Aquí se llama a la funcion para ir a Libros
+                    gestionaMenuLlibres(scanner);
                     break;
                 case "Usuaris":
                     // Aquí se llama a la funcion para ir a Usuarios
@@ -642,11 +632,6 @@ public class Main {
         }
     }
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        gestionaMenuLlibres(scanner);
-
-        scanner.close();
         Scanner scanner = new Scanner(System.in);
 
         gestionaMenuPrincipal(scanner);
