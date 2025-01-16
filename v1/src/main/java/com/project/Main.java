@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,6 +75,73 @@ public class Main {
             file.flush();
         } catch (IOException e) {
             System.out.println("Error al guardar los datos en el archivo: " + e.getMessage());
+        }
+    }// Menú principal
+    public static void menuPrincipal(String filePathUsuaris, List<Map<String, String>> usuaris) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\nGestió de biblioteca");
+            System.out.println("1. Llibres");
+            System.out.println("2. Usuaris");
+            System.out.println("3. Préstecs");
+            System.out.println("0. Sortir");
+            System.out.print("Escull una opció: ");
+            
+            String opcio = scanner.nextLine();
+
+            switch (opcio) {
+                case "1":
+                    // Crida a menuLlibres (pendent d'implementar)
+                    break;
+                case "2":
+                    menuUsuaris(filePathUsuaris, usuaris);
+                    break;
+                case "3":
+                    // Crida a menuPrestecs (pendent d'implementar)
+                    break;
+                case "0":
+                    System.out.println("Sortint del programa...");
+                    return;
+                default:
+                    System.out.println("Opció no vàlida.");
+            }
+        }
+    }
+
+    // Menú de gestió d'usuaris
+    public static void menuUsuaris(String filePath, List<Map<String, String>> usuaris) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\nGestió de usuaris");
+            System.out.println("1. Afegir");
+            System.out.println("2. Modificar");
+            System.out.println("3. Eliminar");
+            System.out.println("4. Llistar");
+            System.out.println("0. Tornar al menú principal");
+            System.out.print("Escull una opció: ");
+            
+            String opcio = scanner.nextLine();
+
+            switch (opcio) {
+                case "1":
+                    //afegirUsuari(filePath, usuaris);
+                    break;
+                case "2":
+                    //modificarUsuari(filePath, usuaris);
+                    break;
+                case "3":
+                    //eliminarUsuari(filePath, usuaris);
+                    break;
+                case "4":
+                    //llistarUsuaris(usuaris);
+                    break;
+                case "0":
+                    return; // Torna al menú principal
+                default:
+                    System.out.println("Opció no vàlida. Intenta-ho de nou.");
+            }
         }
     }
 
