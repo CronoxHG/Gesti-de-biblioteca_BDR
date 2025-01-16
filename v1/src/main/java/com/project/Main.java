@@ -262,7 +262,7 @@ public class Main {
         System.out.print("Camp a modificar (Titol/Autor): ");
         String camp = scanner.nextLine().trim();
         // Verificar que el campo a modificar sea válido
-        if (!camp.equals("Titol") && !camp.equals("Autor")) {
+        if (!camp.replace("í", "i").equalsIgnoreCase("Titol") && !camp.equalsIgnoreCase("Autor")) {
             System.out.println("El camp '" + camp + "' no és vàlid. Només pots modificar Titol o Autor.");
             return;
         }
