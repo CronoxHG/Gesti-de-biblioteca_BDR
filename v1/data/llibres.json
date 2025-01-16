@@ -18,15 +18,5 @@
         "titol": "Evangelion",
         "id": 5,
         "autor": ["Jose Aznar"]
-    },
-    {
-        "titol": "Capitan America",
-        "id": 7,
-        "autor": ["Marvel"]
-    },
-    {
-        "titol": "Cortar por la linea de puntos",
-        "id": 8,
-        "autor": ["Jose Jimenez"]
     }
 ]

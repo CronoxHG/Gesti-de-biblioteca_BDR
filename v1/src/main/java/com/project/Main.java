@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.util.ArrayList;
 
 public class Main {
 
@@ -221,7 +220,6 @@ public class Main {
     public static void modificarLlibreMenu(Scanner scanner) {
         System.out.println("=== Modificar Llibre ===");
         llistarTotsLlibres(false);
-        llistarTotsLlibres(false);
         System.out.print("ID del llibre a modificar: ");
         int idLlibre = scanner.nextInt();
         scanner.nextLine(); // Limpiar el buffer después de leer un entero
@@ -268,7 +266,6 @@ public class Main {
     public static void esborrarLlibreMenu(Scanner scanner) {
         System.out.println("=== Esborrar Llibre ===");
         llistarTotsLlibres(false);
-        llistarTotsLlibres(false);
         System.out.print("ID del llibre a esborrar: ");
         int idLlibre = scanner.nextInt();
         boolean idExisteix = false;
@@ -286,8 +283,7 @@ public class Main {
         scanner.nextLine();
         String resultat = esborrarLlibre(idLlibre);
         System.out.println(resultat);
-        llistarTotsLlibres(false);
-        llistarTotsLlibres(false);
+        llistarTotsLlibres(true);
     }
 
     public static void llistarTotsLlibres(boolean pausar) {
@@ -349,7 +345,7 @@ public class Main {
                         if (usuari.getInt("id") == prestec.getInt("idUsuari")) {
                             System.out.println(String.format("| %-10s | %-35s | %-35s | %35s | %15s | %17s |",
                                     prestec.getInt("id"),
-                                    usuari.getString("Nom") + " " + usuari.getString("Cognoms"),
+                                    usuari.getString("nom") + " " + usuari.getString("cognoms"),
                                     llibre.getString("titol"),
                                     llibre.getJSONArray("autor").join(", "),
                                     prestec.getString("dataPrestec"),
