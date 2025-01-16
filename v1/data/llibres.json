@@ -1,18 +1,22 @@
 [
     {
-      "Id": 1,
-      "Titol": "El Petit Príncep",
-      "Autor": ["Antoine de Saint-Exupéry"]
+        "titol": "El Petit Príncep",
+        "id": 1,
+        "autor": ["Antoine de Saint-Exupéry"]
     },
     {
-      "Id": 2,
-      "Titol": "1984",
-      "Autor": ["George Orwell"]
+        "titol": "1984",
+        "id": 2,
+        "autor": ["George Orwell"]
     },
     {
-      "Id": 3,
-      "Titol": "Cien años de soledad",
-      "Autor": ["Gabriel García Márquez"]
+        "titol": "Cien años de soledad",
+        "id": 3,
+        "autor": ["Gabriel García Márquez"]
+    },
+    {
+        "titol": "Evangelion",
+        "id": 5,
+        "autor": ["Jose Aznar"]
     }
-  ]
-  
+]
