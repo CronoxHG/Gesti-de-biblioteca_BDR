@@ -1,20 +1,20 @@
 [
-    {
-      "id": 1,
-      "nom": "Anna",
-      "cognoms": "Garcia Pérez",
-      "telefon": "666123456"
-    },
-    {
-      "id": 2,
-      "nom": "Joan",
-      "cognoms": "Martínez López",
-      "telefon": "667987654"
-    },
-    {
-      "id": 3,
-      "nom": "Laura",
-      "cognoms": "Sánchez Ruiz",
-      "telefon": "668456789"
-    }
-  ]
+  {
+    "id": 1,
+    "nom": "Anna",
+    "cognoms": "Garcia Pérez",
+    "telèfon": "666123456"
+  },
+  {
+    "id": 2,
+    "nom": "Joan",
+    "cognoms": "Martínez López",
+    "telèfon": "667987654"
+  },
+  {
+    "id": 3,
+    "nom": "Laura",
+    "cognoms": "Sánchez Ruiz",
+    "telèfon": "668456789"
+  }
+]
