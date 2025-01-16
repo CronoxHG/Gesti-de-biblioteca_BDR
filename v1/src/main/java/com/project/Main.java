@@ -96,6 +96,18 @@ public class Main {
         return maxId + 1;
     }
 
+    public static boolean digit(String num) {
+        for (char numSeparat : num.toCharArray()) {
+            if (!Character.isDigit(numSeparat)) {
+                return false;
+            }
+        }
+        if (num == "" || num == null){
+            return false;
+        }
+        return true;
+    }
+
     public static String ficarLlibreNou(int idLlibre, String nomLlibre, String nomAutor) {
         String filePath = "./data/llibres.json";
         // Crear el nou llibre
@@ -221,9 +233,17 @@ public class Main {
         System.out.println("=== Modificar Llibre ===");
         llistarTotsLlibres(false);
         System.out.print("ID del llibre a modificar: ");
-        int idLlibre = scanner.nextInt();
-        scanner.nextLine(); // Limpiar el buffer después de leer un entero
-    
+        String input = scanner.nextLine().trim();
+
+        // Intentar convertir el ID a un número entero
+        int idLlibre;
+        try {
+            idLlibre = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: L'ID ha de ser un número enter.");
+            return; // Salir y volver al menú
+        }
+
         // Buscar si el libro con el ID existe
         JSONObject llibreSeleccionat = null;
         for (int i = 0; i < llibres.length(); i++) {
@@ -266,8 +286,17 @@ public class Main {
     public static void esborrarLlibreMenu(Scanner scanner) {
         System.out.println("=== Esborrar Llibre ===");
         llistarTotsLlibres(false);
-        System.out.print("ID del llibre a esborrar: ");
-        int idLlibre = scanner.nextInt();
+        System.out.print("ID del llibre a eliminar: ");
+        String input = scanner.nextLine().trim();
+
+        // Intentar convertir el ID a un número entero
+        int idLlibre;
+        try {
+            idLlibre = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: L'ID ha de ser un número enter.");
+            return; // Salir y volver al menú
+        }
         boolean idExisteix = false;
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
