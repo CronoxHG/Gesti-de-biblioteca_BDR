@@ -63,7 +63,7 @@ public class Main {
                 return false;
             }
         }
-        if (num == ""){
+        if (num == "" || num == null){
             return false;
         }
         return true;
@@ -193,7 +193,7 @@ public class Main {
         try {
             Integer.parseInt(idLlibre);
         } catch (NumberFormatException e) {
-            System.out.println("Error: " + idLlibre + "no és un id vàlid.");
+            System.out.println("Error: " + idLlibre + " no és un id vàlid.");
             return;
         }
 
