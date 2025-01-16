@@ -3,6 +3,7 @@ package com.project;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,134 +17,187 @@ import org.json.JSONObject;
 
 public class Main {
 
-    public static void main(String[] args) {
-        // Especificar la ruta del archivo de usuarios
-        String filePathUsuaris = "./data/usuaris.json";
-        
-        // Cargar los datos de los usuarios
-        List<Map<String, String>> usuaris = cargarUsuaris(filePathUsuaris);
-
-        // Menú principal
-        //menuPrincipal(filePathUsuaris, usuaris);
+    public static void esperarEnter() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Prem Enter per continuar...");
+        scanner.nextLine();
     }
 
-    // Cargar usuarios desde el archivo JSON
-    public static List<Map<String, String>> cargarUsuaris(String filePath) {
+    public static void clearScreen() {
+        try {
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Validar y formatear entradas
+    public static String formatarEntrada(String entrada) {
+        if (entrada == null || entrada.trim().isEmpty()) {
+            return "";
+        }
+        return entrada.trim().substring(0, 1).toUpperCase() + entrada.trim().substring(1).toLowerCase();
+    }
+
+    public static List<Map<String, String>> carregarUsuaris(String filePath) {
         List<Map<String, String>> usuaris = new ArrayList<>();
 
         try {
-            // Leer el contenido del archivo JSON
             String content = new String(Files.readAllBytes(Paths.get(filePath)));
-            
-            // Convertir el contenido a un array JSON
             JSONArray jsonArray = new JSONArray(content);
 
-            // Recorrer el array JSON y almacenar los usuarios en la lista
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject obj = jsonArray.getJSONObject(i);
                 Map<String, String> usuari = new HashMap<>();
                 usuari.put("Id", String.valueOf(obj.getInt("Id")));
-                usuari.put("Nom", obj.getString("Nom"));
-                usuari.put("Cognoms", obj.getString("Cognoms"));
-                usuari.put("Telèfon", obj.getString("Telèfon"));
+                usuari.put("Nom", formatarEntrada(obj.getString("Nom")));
+                usuari.put("Cognoms", formatarEntrada(obj.getString("Cognoms")));
+                usuari.put("Telefon", obj.getString("Telefon"));
                 usuaris.add(usuari);
             }
-        } catch (IOException | JSONException e) {
-            System.out.println("Error al cargar los datos del archivo: " + e.getMessage());
+        } catch (NoSuchFileException e) {
+            System.out.println("El fitxer '" + filePath + "' no existeix. Crea el fitxer abans d'executar el programa.");
+        } catch (JSONException e) {
+            System.out.println("El fitxer JSON té un format incorrecte: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error al llegir el fitxer: " + e.getMessage());
         }
 
         return usuaris;
     }
 
-    // Guardar usuarios en el archivo JSON
     public static void guardarUsuaris(String filePath, List<Map<String, String>> usuaris) {
         JSONArray jsonArray = new JSONArray();
 
-        // Recorrer la lista de usuarios y convertirla a un formato JSON
         for (Map<String, String> usuari : usuaris) {
             JSONObject obj = new JSONObject();
             obj.put("Id", Integer.parseInt(usuari.get("Id")));
             obj.put("Nom", usuari.get("Nom"));
             obj.put("Cognoms", usuari.get("Cognoms"));
-            obj.put("Telèfon", usuari.get("Telèfon"));
+            obj.put("Telefon", usuari.get("Telefon"));
             jsonArray.put(obj);
         }
 
-        // Guardar el array JSON en el archivo
         try (FileWriter file = new FileWriter(filePath)) {
-            file.write(jsonArray.toString(4)); // Formato con indentación de 4 espacios
+            file.write(jsonArray.toString(4));
             file.flush();
         } catch (IOException e) {
-            System.out.println("Error al guardar los datos en el archivo: " + e.getMessage());
-        }
-    }// Menú principal
-    public static void menuPrincipal(String filePathUsuaris, List<Map<String, String>> usuaris) {
-        Scanner scanner = new Scanner(System.in);
-
-        while (true) {
-            System.out.println("\nGestió de biblioteca");
-            System.out.println("1. Llibres");
-            System.out.println("2. Usuaris");
-            System.out.println("3. Préstecs");
-            System.out.println("0. Sortir");
-            System.out.print("Escull una opció: ");
-            
-            String opcio = scanner.nextLine();
-
-            switch (opcio) {
-                case "1":
-                    // Crida a menuLlibres (pendent d'implementar)
-                    break;
-                case "2":
-                    menuUsuaris(filePathUsuaris, usuaris);
-                    break;
-                case "3":
-                    // Crida a menuPrestecs (pendent d'implementar)
-                    break;
-                case "0":
-                    System.out.println("Sortint del programa...");
-                    return;
-                default:
-                    System.out.println("Opció no vàlida.");
-            }
+            System.out.println("Error al guardar els usuaris: " + e.getMessage());
         }
     }
 
-    // Menú de gestió d'usuaris
     public static void menuUsuaris(String filePath, List<Map<String, String>> usuaris) {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("\nGestió de usuaris");
-            System.out.println("1. Afegir");
-            System.out.println("2. Modificar");
-            System.out.println("3. Eliminar");
-            System.out.println("4. Llistar");
-            System.out.println("0. Tornar al menú principal");
+            clearScreen();
+            System.out.println("\n=== Gestió d'usuaris ===");
+            System.out.println("1. Afegir Usuari");
+            System.out.println("2. Modificar Usuari");
+            System.out.println("3. Eliminar Usuari");
+            System.out.println("4. Llistar Usuaris");
+            System.out.println("0. Tornar");
             System.out.print("Escull una opció: ");
-            
-            String opcio = scanner.nextLine();
+
+            String opcio = scanner.nextLine().trim();
 
             switch (opcio) {
                 case "1":
-                    //afegirUsuari(filePath, usuaris);
+                    afegirUsuari(filePath, usuaris);
                     break;
                 case "2":
-                    //modificarUsuari(filePath, usuaris);
+                    modificarUsuari(filePath, usuaris);
                     break;
                 case "3":
-                    //eliminarUsuari(filePath, usuaris);
+                    eliminarUsuari(filePath, usuaris);
                     break;
                 case "4":
-                    //llistarUsuaris(usuaris);
+                    llistarUsuaris(usuaris);
+                    esperarEnter();
                     break;
                 case "0":
-                    return; // Torna al menú principal
+                    return;
                 default:
-                    System.out.println("Opció no vàlida. Intenta-ho de nou.");
+                    System.out.println("Opció no vàlida. Torna a intentar-ho.");
             }
         }
     }
 
+    public static void afegirUsuari(String filePath, List<Map<String, String>> usuaris) {
+        Scanner scanner = new Scanner(System.in);
+        Map<String, String> nouUsuari = new HashMap<>();
 
+        System.out.print("Introdueix l'ID de l'usuari: ");
+        nouUsuari.put("Id", scanner.nextLine().trim());
+        System.out.print("Introdueix el nom de l'usuari: ");
+        nouUsuari.put("Nom", formatarEntrada(scanner.nextLine()));
+        System.out.print("Introdueix els cognoms de l'usuari: ");
+        nouUsuari.put("Cognoms", formatarEntrada(scanner.nextLine()));
+        System.out.print("Introdueix el telèfon de l'usuari: ");
+        nouUsuari.put("Telefon", scanner.nextLine().trim());
+
+        usuaris.add(nouUsuari);
+        guardarUsuaris(filePath, usuaris);
+        System.out.println("Usuari afegit correctament.");
+    }
+
+    public static void modificarUsuari(String filePath, List<Map<String, String>> usuaris) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Introdueix l'ID de l'usuari a modificar: ");
+        String id = scanner.nextLine().trim();
+
+        for (Map<String, String> usuari : usuaris) {
+            if (usuari.get("Id").equals(id)) {
+                System.out.print("Nou nom (actual: " + usuari.get("Nom") + "): ");
+                usuari.put("Nom", formatarEntrada(scanner.nextLine()));
+                System.out.print("Noves cognoms (actual: " + usuari.get("Cognoms") + "): ");
+                usuari.put("Cognoms", formatarEntrada(scanner.nextLine()));
+                System.out.print("Nou telèfon (actual: " + usuari.get("Telefon") + "): ");
+                usuari.put("Telefon", scanner.nextLine().trim());
+
+                guardarUsuaris(filePath, usuaris);
+                System.out.println("Usuari modificat correctament.");
+                return;
+            }
+        }
+        System.out.println("No s'ha trobat cap usuari amb aquest ID.");
+    }
+
+    public static void eliminarUsuari(String filePath, List<Map<String, String>> usuaris) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Introdueix l'ID de l'usuari a eliminar: ");
+        String id = scanner.nextLine().trim();
+
+        for (int i = 0; i < usuaris.size(); i++) {
+            if (usuaris.get(i).get("Id").equals(id)) {
+                usuaris.remove(i);
+                guardarUsuaris(filePath, usuaris);
+                System.out.println("Usuari eliminat correctament.");
+                return;
+            }
+        }
+        System.out.println("No s'ha trobat cap usuari amb aquest ID.");
+    }
+
+    public static void llistarUsuaris(List<Map<String, String>> usuaris) {
+        System.out.println("\n=== Llistat d'usuaris ===");
+        System.out.println("ID\tNom\tCognoms\tTelèfon");
+        for (Map<String, String> usuari : usuaris) {
+            System.out.println(usuari.get("Id") + "\t" + usuari.get("Nom") + "\t" + usuari.get("Cognoms") + "\t" + usuari.get("Telefon"));
+        }
+    }
+
+    public static void main(String[] args) {
+        String filePathUsuaris = "./data/usuaris.json";
+        List<Map<String, String>> usuaris = carregarUsuaris(filePathUsuaris);
+
+        menuUsuaris(filePathUsuaris, usuaris);
+    }
 }
