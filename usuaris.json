@@ -1,0 +1,26 @@
+[
+    {
+        "cognoms": "B c",
+        "telefon": "32423",
+        "id": 1,
+        "nom": "A"
+    },
+    {
+        "cognoms": "Hirsch garcia",
+        "telefon": "675205305",
+        "id": 4,
+        "nom": "Daniel"
+    },
+    {
+        "cognoms": "Hirsch",
+        "telefon": "4545453",
+        "id": 5,
+        "nom": "Daniel"
+    },
+    {
+        "cognoms": "Dasdas",
+        "telefon": "233334",
+        "id": 2,
+        "nom": "Holi"
+    }
+]
