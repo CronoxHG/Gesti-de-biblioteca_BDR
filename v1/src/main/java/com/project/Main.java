@@ -1266,78 +1266,6 @@ public class Main {
         String[] lines = menuText.split("\\R");
         return new ArrayList<>(Arrays.asList(lines));
     }
-    
-    public static String obtenerOpcionPrincipal(Scanner scanner) {
-        ArrayList<String> menu = menuPrincipal();
-    
-        while (true) {
-            System.out.print("Escull una opció: ");
-            String opcio = scanner.nextLine();
-    
-            try {
-                int index = Integer.parseInt(opcio);
-                if (index == 0) {
-                    return "Sortir";
-                }
-                else if (index > 0 && index < menu.size() - 1) {
-                    return menu.get(index).substring(3).trim();
-                }
-            }
-            catch (NumberFormatException e) {
-                // Ignorar la excepción y pedir otra entrada
-            }
-    
-            System.out.println("Opció no vàlida. Torna a intentar-ho");
-        }
-    }
-
-    public static String obtenerOpcion(Scanner scanner) {
-        ArrayList<String> menu = menuLlibres();
-    
-        while (true) {
-            System.out.print("Escull una opció: ");
-            String opcio = scanner.nextLine();
-    
-            try {
-                int index = Integer.parseInt(opcio);
-                if (index == 0) {
-                    return "Tornar al menú principal";
-                }
-                else if (index > 0 && index < menu.size() - 1) {
-                    return menu.get(index).substring(3).trim();
-                }
-            }
-            catch (NumberFormatException e) {
-                // Ignorar la excepción y pedir otra entrada
-            }
-    
-            System.out.println("Opció no vàlida. Torna a intentar-ho");
-        }
-    }
-    
-    public static String obtenerOpcionLlistar(Scanner scanner) {
-        ArrayList<String> menu = menuLlistarLlibres();
-
-        while (true) {
-            System.out.print("Escull una opció: ");
-            String opcio = scanner.nextLine();
-
-            try {
-                int index = Integer.parseInt(opcio);
-                if (index == 0) {
-                    return "Tornar al menú de llibres";
-                }
-                else if (index > 0 && index < menu.size() - 1) {
-                    return menu.get(index).substring(3).trim();
-                }
-            }
-            catch (NumberFormatException e) {
-                // Ignorar la excepción y pedir otra entrada
-            }
-
-            System.out.println("Opció no vàlida. Torna a intentar-ho");
-        }
-    }
 
     public static void gestionaMenuLlibres(Scanner scanner) {
         ArrayList<String> menuLlibres = menuLlibres();
@@ -1346,20 +1274,26 @@ public class Main {
             clearScreen();
             dibuixarLlista(menuLlibres);
     
-            String opcio = obtenerOpcion(scanner);
-            switch (opcio) {
-                case "Tornar al menú principal":
+            System.out.print("Escull una opció: ");
+            String opcio = scanner.nextLine();
+            switch (opcio.toLowerCase().replace("ú", "u")) {
+                case "0":
+                case "tornar al menú principal":
                     return;
-                case "Afegir":
+                case "1":
+                case "afegir":
                     afegirLlibre(scanner);
                     break;
-                case "Modificar":
+                case "2":
+                case "modificar":
                     modificarLlibreMenu(scanner);
                     break;
-                case "Eliminar":
+                case "3":
+                case "eliminar":
                     esborrarLlibreMenu(scanner);
                     break;
-                case "Llistar":
+                case "4":
+                case "llistar":
                     gestionaMenuLlistarLlibres(scanner);
                     break;
                 default:
@@ -1376,20 +1310,26 @@ public class Main {
             clearScreen();
             dibuixarLlista(menuLlistarLlibres);
 
-            String opcio = obtenerOpcionLlistar(scanner);
-            switch (opcio) {
-                case "Tornar al menú de llibres":
+            System.out.print("Escull una opció: ");
+            String opcio = scanner.nextLine();
+            switch (opcio.toLowerCase().replace("é", "e").replace("í", "i")) {
+                case "0":
+                case "tornar al menú de llibres":
                     return;
-                case "Tots":
+                case "1":
+                case "tots":
                     llistarTotsLlibres(true);
                     break;
-                case "En préstec":
+                case "2":
+                case "en préstec":
                     llistarLlibresEnPrestec();
                     break;
-                case "Per autor":
+                case "3":
+                case "per autor":
                     llistarLlibresPerAutor();
                     break;
-                case "Cercar títol":
+                case "4":
+                case "cercar títol":
                     llistarLlibresPerBusqueda();
                     break;
                 default:
@@ -1489,17 +1429,22 @@ public class Main {
             clearScreen();
             dibuixarLlista(menuPrincipal);
     
-            String opcio = obtenerOpcionPrincipal(scanner);
-            switch (opcio) {
-                case "Sortir":
+            System.out.print("Escull una opció: ");
+            String opcio = scanner.nextLine();
+            switch (opcio.toLowerCase().replace("é", "e")) {
+                case "0":
+                case "sortir":
                     return;
-                case "Llibres":
+                case "1":
+                case "llibres":
                     gestionaMenuLlibres(scanner);
                     break;
-                case "Usuaris":
+                case "2":
+                case "usuaris":
                     // Aquí se llama a la funcion para ir a Usuarios
                     break;
-                case "Préstecs":
+                case "3":
+                case "préstecs":
                     gestionaMenuPrestecs(scanner);
                     break;
                 default:
