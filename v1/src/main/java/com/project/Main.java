@@ -1,5 +1,6 @@
 package com.project;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -144,8 +145,10 @@ public class Main {
     
         // Construir el JSONArray per al camp "Autor"
         JSONArray autorsArray = new JSONArray();
-        autorsArray.put(nomAutor); // Afegir el nom de l'autor com un element del array
-    
+        String[] autorsSeparats = nomAutor.split(",\\s*"); // Dividir per comes i espais
+        for (String autor : autorsSeparats) {
+            autorsArray.put(autor.trim()); // Afegir cada autor al array
+    }
         // Configurar els valors del llibre nou
         nouLlibre.put("id", nouId);
         nouLlibre.put("titol", nomLlibre);
@@ -342,17 +345,18 @@ public class Main {
     }
 
     public static String llegirNomAutor(Scanner scanner) {
-        System.out.print("Introdueix el nom de l'autor del llibre: ");
+        System.out.print("Introdueix el nom de l'autor del llibre (separa múltiples autors amb comes): ");
         String nomAutor = scanner.nextLine();
-
-        while (!validarNomAutor(nomAutor)) {
-            System.out.println("Nom no vàlid. Només s'accepten lletres i espais");
-            System.out.print("Introdueix el nom de l'autor del llibre: ");
+    
+        while (!validarNomAutor(nomAutor.replace(",", ""))) { // Validar noms sense comes
+            System.out.println("Nom no vàlid. Només s'accepten lletres, espais i comes per separar autors.");
+            System.out.print("Introdueix el nom de l'autor del llibre (separa múltiples autors amb comes): ");
             nomAutor = scanner.nextLine();
         }
-        
-        return nomAutor;
+    
+        return nomAutor; // Retornar la cadena amb els autors separats per comes
     }
+    
 
     public static void afegirPrestec() {
         String filePath = "./data/prestecs.json";
@@ -1132,31 +1136,42 @@ public class Main {
     
     public static void llistarLlibresPerAutor() {
         HashMap<String, List<JSONObject>> autorsMap = new HashMap<>();
-
-        String header = String.format("| %-50s | %-30s | %-10s |", "Autor(s)", "Títol", "Id Llibre");
-        String separador = "-".repeat(header.length());
-        System.out.println(separador);
-        System.out.println(header);
-        System.out.println(separador);
-        
+        // Recopilar datos en el mapa
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
             JSONArray autorsArray = llibre.getJSONArray("autor");
-            
+
             for (int j = 0; j < autorsArray.length(); j++) {
                 String autor = autorsArray.getString(j);
 
                 autorsMap.putIfAbsent(autor, new ArrayList<>());
                 autorsMap.get(autor).add(llibre);
             }
+        }
 
-            String fila = String.format(
-                "| %-50s | %-30s | %-10s |",
-                autorsArray.toString(),
-                llibre.getString("titol"),
-                llibre.getInt("id")
-            );
-            System.out.println(fila);
+        // Ordenar los autores alfabéticamente
+        List<String> autorsOrdenats = new ArrayList<>(autorsMap.keySet());
+        Collections.sort(autorsOrdenats);
+
+        // Encabezado de la tabla
+        String header = String.format("| %-50s | %-30s | %-10s |", "Autor(s)", "Títol", "Id Llibre");
+        String separador = "-".repeat(header.length());
+        System.out.println(separador);
+        System.out.println(header);
+        System.out.println(separador);
+
+        // Imprimir libros ordenados por autor
+        for (String autor : autorsOrdenats) {
+            List<JSONObject> llibresDelAutor = autorsMap.get(autor);
+            for (JSONObject llibre : llibresDelAutor) {
+                String fila = String.format(
+                    "| %-50s | %-30s | %-10s |",
+                    autor,
+                    llibre.getString("titol"),
+                    llibre.getInt("id")
+                );
+                System.out.println(fila);
+            }
             System.out.println(separador);
         }
     }
