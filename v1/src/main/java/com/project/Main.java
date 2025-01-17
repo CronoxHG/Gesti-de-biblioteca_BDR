@@ -482,109 +482,37 @@ public class Main {
 
 
     // -------------------- Funciones Menu Préstecs --------------------------------------------------
-    public static boolean dataValida(String data) { // mirar si realmente se necesita porque debería de cogerlo
-        // directamente, a lo mejor se necesita para
+    public static boolean dataValida(String data) {
+        // Dividir la fecha en sus componentes
         String[] dataStringArray = data.split("-");
-        // mirar de que tots els elements de l'array siguin numeros sencers.
-        if (dataStringArray.length != 3) { // comprobar que la longitut del array que conté la data es correcte.
-        return false;
+        
+        // Verificar que la fecha tenga el formato correcto (YYYY-MM-DD)
+        if (dataStringArray.length != 3) {
+            return false;
         }
-        for (String num : dataStringArray) {
-        if (!digit(num)) {
-        return false;
+    
+        try {
+            int any = Integer.parseInt(dataStringArray[0]);
+            int mes = Integer.parseInt(dataStringArray[1]);
+            int dia = Integer.parseInt(dataStringArray[2]);
+    
+            // Validar mes y día
+            if (mes < 1 || mes > 12 || dia < 1) {
+                return false;
+            }
+    
+            // Días máximos por mes (considerando años bisiestos para febrero)
+            int[] diasPorMes = { 31, (esBisiesto(any) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    
+            return dia <= diasPorMes[mes - 1];
+        } catch (NumberFormatException e) {
+            // Si no se pueden convertir los valores a enteros, la fecha no es válida
+            return false;
         }
-        }
-        boolean esBisiesto = true;
-        Integer any = Integer.parseInt(dataStringArray[0]);
-        Integer mes = Integer.parseInt(dataStringArray[1]);
-        Integer dia = Integer.parseInt(dataStringArray[2]);
-        if (any % 4 == 0) {
-        if (any % 100 == 0) {
-        if (any % 400 == 0) {
-        esBisiesto = true;
-        } else {// no es bisiesto
-        esBisiesto = false;
-        }
-        } else {
-        esBisiesto = true;
-        }
-
-        } else { // no es bisiesto
-        esBisiesto = false;
-        }
-
-        if (("0" + mes).equals("02") && dia > 29) {
-        return false;
-        }
-
-        if (!(esBisiesto) && ("0" + mes).equals("02") && dia > 28) {
-        return false;
-        }
-        if (mes < 1 || mes > 12) {
-        return false;
-        }
-        if (dia < 1) {
-        return false;
-        }
-
-        switch (mes) {
-        case 1: {
-        if (dia > 31) {
-        return false;
-        }
-        }
-        case 3: {
-        if (dia > 31) {
-        return false;
-        }
-        }
-        case 4: {
-        if (dia > 30) {
-        return false;
-        }
-        }
-        case 5: {
-        if (dia > 31) {
-        return false;
-        }
-        }
-        case 6: {
-        if (dia > 30) {
-        return false;
-        }
-        }
-        case 7: {
-        if (dia > 31) {
-        return false;
-        }
-        }
-        case 8: {
-        if (dia > 31) {
-        return false;
-        }
-        }
-        case 9: {
-        if (dia > 30) {
-        return false;
-        }
-        }
-        case 10: {
-        if (dia > 31) {
-        return false;
-        }
-        }
-        case 11: {
-        if (dia > 30) {
-        return false;
-        }
-        }
-        case 12: {
-        if (dia > 31) {
-        return false;
-        }
-        }
-        }
-        return true;
+    }    
+    private static boolean esBisiesto(int any) {
+        // Comprobar si un año es bisiesto
+        return (any % 4 == 0 && (any % 100 != 0 || any % 400 == 0));
     }
     public static void afegirPrestec() {
         String filePath = "./data/prestecs.json";
@@ -1439,7 +1367,7 @@ public class Main {
         }
     }
 
-    
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
