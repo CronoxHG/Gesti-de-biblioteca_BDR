@@ -329,6 +329,10 @@ public class Main {
         llistarTotsLlibres(true);
     }
     public static void llistarTotsLlibres(boolean pausar) {
+        if (llibres.isEmpty()) {
+            System.out.println("No hi ha llibres per llistar");
+        }
+
         String header = String.format("| %-10s | %-30s | %-50s |", "Id Llibre", "Títol", "Autor(s)");
         String separador = "-".repeat(header.length());
         System.out.println(separador);
@@ -360,6 +364,10 @@ public class Main {
         }
     }
     public static void llistarLlibresEnPrestec() {
+        if (llibres.isEmpty()) {
+            System.out.println("No hi ha llibres per llistar");
+        }
+
         JSONArray llibresLlistar = llibres;
         JSONArray usuarisLlistar = usuaris;
         JSONArray prestecsLlistar = prestecs;
@@ -398,6 +406,10 @@ public class Main {
         }
     }
     public static void llistarLlibresPerAutor() {
+        if (llibres.isEmpty()) {
+            System.out.println("No hi ha llibres per llistar");
+        }
+
         HashMap<String, List<JSONObject>> autorsMap = new HashMap<>();
         // Recopilar datos en el mapa
         for (int i = 0; i < llibres.length(); i++) {
@@ -439,6 +451,10 @@ public class Main {
         }
     }
     public static void llistarLlibresPerBusqueda() {
+        if (llibres.isEmpty()) {
+            System.out.println("No hi ha llibres per llistar");
+        }
+
         Scanner scanner = new Scanner(System.in);
         String header = String.format("| %-10s | %-30s | %-50s |", "Id Llibre", "Títol", "Autor(s)");
         String separador = "-".repeat(header.length());
