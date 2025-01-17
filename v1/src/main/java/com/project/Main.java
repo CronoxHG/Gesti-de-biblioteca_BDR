@@ -4,13 +4,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.time.LocalDate;
+import java.io.*;
 
 public class Main {
 
@@ -94,6 +95,32 @@ public class Main {
         JSONArray prestecs = new JSONArray(contentPrestecs);
         return prestecs;
     }  
+    public static String formatarEntrada(String entrada) {
+        if (entrada == null || entrada.trim().isEmpty()) {
+            return "";
+        }
+        return entrada.trim().substring(0, 1).toUpperCase() + entrada.trim().substring(1).toLowerCase();
+    }
+    // Método para cargar los usuarios desde un archivo JSON
+    public static List<JSONObject> carregarUsuaris(String filePath) {
+        List<JSONObject> usuaris = new ArrayList<>();
+
+        try {
+            String content = new String(Files.readAllBytes(Paths.get(filePath)));
+            JSONArray jsonArray = new JSONArray(content);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                usuaris.add(obj);
+            }
+        } catch (NoSuchFileException e) {
+            System.out.println("El fitxer '" + filePath + "' no existeix. Crea el fitxer abans d'executar el programa.");
+        } catch (IOException e) {
+            System.out.println("Error al llegir el fitxer: " + e.getMessage());
+        }
+
+        return usuaris;
+    }
     public static int calcularNouId() {
         int maxId = 0;
         for (int i = 0; i < llibres.length(); i++) {
@@ -1136,6 +1163,315 @@ public class Main {
 
 
 
+    // -------------------- Funciones Menu Usuarios --------------------------------------------------
+    // Método para guardar los usuarios en el archivo JSON
+    public static void guardarUsuaris() {
+        String filePath = "./data/usuaris.json";
+        try {
+            Files.write(Paths.get(filePath), usuaris.toString(4).getBytes());
+        } catch (IOException e) {
+            System.out.println("Error al guardar els usuaris: " + e.getMessage());
+        }
+    }
+    // Método para agregar un nuevo usuario
+    public static void afegirUsuari(boolean pausar) {
+        System.out.println("=== Afegir Usuari ===");
+    
+        // Obtener el próximo id disponible
+        int nouId = 1;
+        for (int i = 0; i < usuaris.length(); i++) {
+            int currentId = usuaris.getJSONObject(i).getInt("id");
+            if (currentId >= nouId) {
+                nouId = currentId + 1;
+            }
+        }
+    
+        Scanner scanner = new Scanner(System.in);
+        JSONObject nouUsuari = new JSONObject();
+    
+        // Solicitar datos del usuario
+        nouUsuari.put("id", nouId);
+        System.out.print("Introdueix el nom del nou usuari: ");
+        nouUsuari.put("nom", formatarEntrada(scanner.nextLine()));
+        System.out.print("Introdueix els cognoms del nou usuari: ");
+        nouUsuari.put("cognoms", formatarEntrada(scanner.nextLine()));
+        System.out.print("Introdueix el telèfon del nou usuari: ");
+        nouUsuari.put("telefon", scanner.nextLine().trim());
+    
+        // Añadir el usuario al JSONArray y guardar
+        usuaris.put(nouUsuari);
+        guardarUsuaris();
+    
+        System.out.println("Usuari afegit correctament amb ID: " + nouId);
+        if (pausar) {
+            esperarEnter();
+        }
+    }
+    // Método para modificar un usuario
+    public static void modificarUsuari(boolean pausar) {
+        System.out.println("=== Modificar Usuari ===");
+        llistarUsuaris(false);
+    
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Introdueix l'ID del usuari a modificar: ");
+        int id = Integer.parseInt(scanner.nextLine().trim());
+    
+        for (int i = 0; i < usuaris.length(); i++) {
+            JSONObject usuari = usuaris.getJSONObject(i);
+    
+            if (usuari.getInt("id") == id) {
+                // Mostrar información actual y solicitar nuevos datos
+                System.out.println("Modificant usuari amb ID: " + id);
+                System.out.print("Nou nom (actual: " + usuari.getString("nom") + "): ");
+                usuari.put("nom", formatarEntrada(scanner.nextLine()));
+                System.out.print("Noves cognoms (actual: " + usuari.getString("cognoms") + "): ");
+                usuari.put("cognoms", formatarEntrada(scanner.nextLine()));
+                System.out.print("Nou telèfon (actual: " + usuari.getString("telefon") + "): ");
+                usuari.put("telefon", scanner.nextLine().trim());
+    
+                guardarUsuaris();
+                System.out.println("Usuari modificat correctament.");
+                if (pausar) {
+                    esperarEnter();
+                }
+                return;
+            }
+        }
+    
+        System.out.println("No s'ha trobat cap usuari amb ID: " + id);
+        if (pausar) {
+            esperarEnter();
+        }
+    }    
+    // Método para eliminar un usuario
+    public static void eliminarUsuari(boolean pausar) {
+        System.out.println("=== Eliminar Usuari ===");
+        llistarUsuaris(false);
+    
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Introdueix l'ID del usuari a eliminar: ");
+        int id = Integer.parseInt(scanner.nextLine().trim());
+    
+        for (int i = 0; i < usuaris.length(); i++) {
+            JSONObject usuari = usuaris.getJSONObject(i);
+    
+            if (usuari.getInt("id") == id) {
+                usuaris.remove(i);
+                guardarUsuaris();
+                System.out.println("Usuari eliminat correctament.");
+                if (pausar) {
+                    esperarEnter();
+                }
+                return;
+            }
+        }
+    
+        System.out.println("No s'ha trobat cap usuari amb ID: " + id);
+        if (pausar) {
+            esperarEnter();
+        }
+    }
+    // Método para listar los usuarios
+    public static void llistarUsuaris(boolean pausar) {
+        if (usuaris.isEmpty()) {
+            System.out.println("No hi ha usuaris per llistar");
+            return;
+        }
+    
+        // Crear encabezado y separador
+        String header = String.format("| %-5s | %-20s | %-30s | %-15s |", "Id", "Nom", "Cognoms", "Telèfon");
+        String separador = "-".repeat(header.length());
+        System.out.println(separador);
+        System.out.println(header);
+        System.out.println(separador);
+    
+        // Iterar por cada usuari y mostrar en formato tabla
+        for (int i = 0; i < usuaris.length(); i++) {
+            JSONObject usuari = usuaris.getJSONObject(i);
+            String fila = String.format(
+                "| %-5s | %-20s | %-30s | %-15s |",
+                usuari.getInt("id"),
+                usuari.getString("nom"),
+                usuari.getString("cognoms"),
+                usuari.getString("telefon")
+            );
+            System.out.println(fila);
+            System.out.println(separador);
+        }
+        if (pausar) {
+            esperarEnter();
+        }
+    }
+    // Método para listar los usuarios con prestamos con fuera de terminio
+    public static void llistaUsuarisAmbPrestecsForaDeTermini(boolean pausar) {
+        JSONArray llibres = null;
+        try {
+            llibres = llibres();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer de llibres.");
+            return;
+        }
+    
+        JSONArray usuaris = null;
+        try {
+            usuaris = usuaris();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer d'usuaris.");
+            return;
+        }
+    
+        JSONArray prestecs = null;
+        try {
+            prestecs = prestecs();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer de préstecs.");
+            return;
+        }
+    
+        if (prestecs.isEmpty()) {
+            System.out.println("No hi han préstecs per llistar");
+            return;
+        }
+    
+        System.out.println("-".repeat(123));
+        String usuarisForaTermini = "Llistat d'usuaris amb préstecs fora de termini";
+        int padding = 119 - usuarisForaTermini.length();
+        int espaiEsquerra = padding / 2;
+        int espaiDreta = padding - espaiEsquerra;
+        System.out.println("| " + " ".repeat(espaiEsquerra) + usuarisForaTermini + " ".repeat(espaiDreta) + " |");
+        System.out.println("-".repeat(123));
+        System.out.println(String.format("| %-35s | %-15s | %-35s | %-25s |", "Nom i cognoms", "Telèfon", "Títol del llibre", "Data de devolució"));
+        System.out.println("-".repeat(123));
+    
+        // Iterar sobre los préstamos
+        for (int i = 0; i < prestecs.length(); i++) {
+            JSONObject prestec = prestecs.getJSONObject(i);
+            LocalDate dataDevolucio = LocalDate.parse(prestec.getString("dataDevolucio"));
+    
+            if (dataDevolucio.isBefore(dataDeAvui)) { // Solo préstamos fuera de término
+                // Encontrar el libro correspondiente
+                JSONObject llibre = null;
+                for (int j = 0; j < llibres.length(); j++) {
+                    if (llibres.getJSONObject(j).getInt("id") == prestec.getInt("idLlibre")) {
+                        llibre = llibres.getJSONObject(j);
+                        break;
+                    }
+                }
+    
+                // Encontrar el usuario correspondiente
+                JSONObject usuari = null;
+                for (int k = 0; k < usuaris.length(); k++) {
+                    if (usuaris.getJSONObject(k).getInt("id") == prestec.getInt("idUsuari")) {
+                        usuari = usuaris.getJSONObject(k);
+                        break;
+                    }
+                }
+    
+                if (llibre != null && usuari != null) {
+                    // Imprimir información del usuario y su préstamo
+                    System.out.println(String.format(
+                        "| %-35s | %-15s | %-35s | %-25s |",
+                        usuari.getString("nom") + " " + usuari.getString("cognoms"),
+                        usuari.getString("telefon"),
+                        llibre.getString("titol"),
+                        prestec.getString("dataDevolucio")
+                    ));
+                    System.out.println("-".repeat(123));
+                }
+            }
+        }
+        if (pausar) {
+            esperarEnter();
+        }
+    }
+    // Método para listar todos los usuarios con prestamos dentro del terminio
+    public static void llistaUsuarisAmbPrestecsActius(boolean pausar) {
+        JSONArray llibres = null;
+        try {
+            llibres = llibres();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer de llibres.");
+            return;
+        }
+    
+        JSONArray usuaris = null;
+        try {
+            usuaris = usuaris();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer d'usuaris.");
+            return;
+        }
+    
+        JSONArray prestecs = null;
+        try {
+            prestecs = prestecs();
+        } catch (IOException e) {
+            System.out.println("Ha surgit un error inesperat en el fitxer de préstecs.");
+            return;
+        }
+    
+        if (prestecs.isEmpty()) {
+            System.out.println("No hi han préstecs per llistar");
+            return;
+        }
+    
+        System.out.println("-".repeat(123));
+        String usuarisActius = "Llistat d'usuaris amb préstecs actius";
+        int padding = 119 - usuarisActius.length();
+        int espaiEsquerra = padding / 2;
+        int espaiDreta = padding - espaiEsquerra;
+        System.out.println("| " + " ".repeat(espaiEsquerra) + usuarisActius + " ".repeat(espaiDreta) + " |");
+        System.out.println("-".repeat(123));
+        System.out.println(String.format("| %-35s | %-15s | %-35s | %-25s |", "Nom i cognoms", "Telèfon", "Títol del llibre", "Data de devolució"));
+        System.out.println("-".repeat(123));
+    
+        // Iterar sobre los préstamos
+        for (int i = 0; i < prestecs.length(); i++) {
+            JSONObject prestec = prestecs.getJSONObject(i);
+            LocalDate dataDevolucio = LocalDate.parse(prestec.getString("dataDevolucio"));
+    
+            if (!dataDevolucio.isBefore(dataDeAvui)) { // Solo préstamos dentro del término
+                // Encontrar el libro correspondiente
+                JSONObject llibre = null;
+                for (int j = 0; j < llibres.length(); j++) {
+                    if (llibres.getJSONObject(j).getInt("id") == prestec.getInt("idLlibre")) {
+                        llibre = llibres.getJSONObject(j);
+                        break;
+                    }
+                }
+    
+                // Encontrar el usuario correspondiente
+                JSONObject usuari = null;
+                for (int k = 0; k < usuaris.length(); k++) {
+                    if (usuaris.getJSONObject(k).getInt("id") == prestec.getInt("idUsuari")) {
+                        usuari = usuaris.getJSONObject(k);
+                        break;
+                    }
+                }
+    
+                if (llibre != null && usuari != null) {
+                    // Imprimir información del usuario y su préstamo
+                    System.out.println(String.format(
+                        "| %-35s | %-15s | %-35s | %-25s |",
+                        usuari.getString("nom") + " " + usuari.getString("cognoms"),
+                        usuari.getString("telefon"),
+                        llibre.getString("titol"),
+                        prestec.getString("dataDevolucio")
+                    ));
+                    System.out.println("-".repeat(123));
+                }
+            }
+        }
+        if (pausar) {
+            esperarEnter();
+        }
+    }
+    
+    
+    
+    
+    
+    
     // -------------------- Funciones creación Menus -------------------------------------------------
     public static ArrayList<String> menuPrincipal() {
         String menuText = """
@@ -1197,10 +1533,92 @@ public class Main {
         String[] lines = menuText.split("\\R");
         return new ArrayList<>(Arrays.asList(lines));
     }
+    public static ArrayList<String> menuUsuarisLlistar() {
+        String menuText = """
+                Llistar usuaris
+                1. Tots els usuaris
+                2. Usuaris amb préstecs actius
+                3. Usuaris amb préstecs fora de termini
+                0. Tornar al menú d'usuaris
+                """;
+        String[] lines = menuText.split("\\R");
+        return new ArrayList<>(Arrays.asList(lines));
+    }
 
 
 
     // -------------------- Funciones gestionar Menus -------------------------------------------------
+    // Menú principal para la gestión de usuarios
+    public static void menuUsuaris(String filePath, List<JSONObject> usuaris) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            clearScreen();
+            System.out.println("Gestió d'usuaris");
+            System.out.println("1. Afegir Usuari");
+            System.out.println("2. Modificar Usuari");
+            System.out.println("3. Eliminar Usuari");
+            System.out.println("4. Llistar Usuaris");
+            System.out.println("0. Tornar");
+            System.out.print("Escull una opció: ");
+
+            String opcio = scanner.nextLine().trim();
+
+            switch (opcio) {
+                case "1":
+                case "afegir usuari":
+                    afegirUsuari(true);
+                    break;
+                case "2":
+                case "modificar usuari":
+                    modificarUsuari(true);
+                    break;
+                case "3":
+                case "eliminar usuari":
+                    eliminarUsuari(true);
+                    break;
+                case "4":
+                case "llistar usuaris":
+                    gestionaMenuLlistarUsuaris(scanner);
+                    break;
+                case "0":
+                case "tornar":
+                    return;
+                default:
+                    System.out.println("Opció no vàlida. Torna a intentar-ho.");
+            }
+        }
+    }
+    public static void gestionaMenuLlistarUsuaris(Scanner scanner) {
+        ArrayList<String> menuLlistarUsuaris = menuUsuarisLlistar();
+    
+        while (true) {
+            clearScreen();
+            dibuixarLlista(menuLlistarUsuaris);
+    
+            System.out.print("Escull una opció: ");
+            String opcio = scanner.nextLine();
+            switch (opcio.toLowerCase().replace("é", "e").replace("ú", "u")) {
+                case "0":
+                case "tornar al menú d'usuaris":
+                    return;
+                case "1":
+                case "tots els usuaris":
+                    llistarUsuaris(true);
+                    break;
+                case "2":
+                case "usuaris amb préstecs actius":
+                    llistaUsuarisAmbPrestecsActius(true);
+                    break;
+                case "3":
+                case "usuaris amb préstecs fora de termini":
+                    llistaUsuarisAmbPrestecsForaDeTermini(true);
+                    break;
+                default:
+                    System.out.println("Opció no vàlida. Torna a intentar-ho");
+            }
+        }
+    }
     public static void gestionaMenuLlibres(Scanner scanner) {
         ArrayList<String> menuLlibres = menuLlibres();
     
@@ -1354,6 +1772,8 @@ public class Main {
     }   
     public static void gestionaMenuPrincipal(Scanner scanner) {
         ArrayList<String> menuPrincipal = menuPrincipal();
+        String filePathUsuaris = "./data/usuaris.json";
+        List<JSONObject> usuaris = carregarUsuaris(filePathUsuaris);
     
         while (true) {
             clearScreen();
@@ -1371,7 +1791,7 @@ public class Main {
                     break;
                 case "2":
                 case "usuaris":
-                    // Aquí se llama a la funcion para ir a Usuarios
+                    menuUsuaris(filePathUsuaris, usuaris);
                     break;
                 case "3":
                 case "préstecs":
