@@ -13,13 +13,5 @@
         "titol": "Cien años de soledad",
         "id": 3,
         "autor": ["Gabriel García Márquez"]
-    },
-    {
-        "titol": "Mazinger Z",
-        "id": 6,
-        "autor": [
-            "Mahuto Shinji",
-            "Paco Hernandez"
-        ]
     }
 ]
