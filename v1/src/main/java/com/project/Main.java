@@ -38,8 +38,8 @@ public class Main {
             e.printStackTrace();
         }
     }
+    // Inicialización del JSONArray de llibres
     public static JSONArray llibres;
-    // Inicialización del JSONArray
     static {
         llibres = new JSONArray();
         try {
@@ -51,8 +51,8 @@ public class Main {
             System.out.println("No s'ha pogut llegir el fitxer de llibres. Inicialitzant amb un JSONArray buit.");
         }
     }
+    // Inicialización del JSONArray d'usuaris
     public static JSONArray usuaris;
-    // Inicialización del JSONArray
     static {
         usuaris = new JSONArray();
         try {
@@ -64,8 +64,8 @@ public class Main {
             System.out.println("No s'ha pogut llegir el fitxer de llibres. Inicialitzant amb un JSONArray buit.");
         }
     }
+    // Inicialización del JSONArray de prestecs
     public static JSONArray prestecs;
-    // Inicialización del JSONArray
     static {
         prestecs = new JSONArray();
         try {
@@ -77,24 +77,28 @@ public class Main {
             System.out.println("No s'ha pogut llegir el fitxer de llibres. Inicialitzant amb un JSONArray buit.");
         }
     }
+    // Inicialización de una función para obtener los libros
     public static JSONArray llibres() throws IOException {
         // importar llibres.json
         String contentLlibres = new String(Files.readAllBytes(Paths.get(filePathLlibres)));
         JSONArray llibres = new JSONArray(contentLlibres);
         return llibres;
     }
+    // Inicialitzación d'una función para llamar a los usuarios
     public static JSONArray usuaris() throws IOException {
         // importar usuaris.json
         String contentUsuaris = new String(Files.readAllBytes(Paths.get(filePathUsuaris)));
         JSONArray usuaris = new JSONArray(contentUsuaris);
         return usuaris;
     }
+    // Inicialización de una función para obtener los préstamos
     public static JSONArray prestecs() throws IOException {
         // importar prestecs.json
         String contentPrestecs = new String(Files.readAllBytes(Paths.get(filePathPrestecs)));
         JSONArray prestecs = new JSONArray(contentPrestecs);
         return prestecs;
     }  
+    // Función para formatear la entrada de datos
     public static String formatarEntrada(String entrada) {
         if (entrada == null || entrada.trim().isEmpty()) {
             return "";
@@ -121,6 +125,7 @@ public class Main {
 
         return usuaris;
     }
+    // Método para calcular un nuevo ID en libros
     public static int calcularNouId() {
         int maxId = 0;
         for (int i = 0; i < llibres.length(); i++) {
@@ -139,6 +144,7 @@ public class Main {
         }
         return true;
     }
+    // Dibujar una lista a la hora de hacer los menus
     public static void dibuixarLlista(ArrayList<String> llista) {
         for (String linia : llista) {
             System.out.println(linia);
@@ -148,6 +154,7 @@ public class Main {
     
 
     // -------------------- Funciones Menu Libros --------------------------------------------------
+    // Función para poder guardar los libros en el archivo .json
     public static String guardarLlibres(String filePath) {
         try {
             Files.write(Paths.get(filePath), llibres.toString(4).getBytes());
@@ -156,6 +163,7 @@ public class Main {
             return "Error escrivint el fitxer.";
         }
     }
+    // Función que hace todos los pasos para introducir los datos introducidos al archivo
     public static String ficarLlibreNou(int idLlibre, String nomLlibre, String nomAutor) {
         String filePath = "./data/llibres.json";
         // Crear el nou llibre
@@ -180,6 +188,7 @@ public class Main {
         String resultat = guardarLlibres(filePath);
         return resultat.startsWith("Error") ? resultat : "Llibre afegit correctament.";
     }
+    // Función para modificar el campo que eligas de libros
     public static String modificarLlibre(int idLlibre, String camp, Object nouValor) {
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
@@ -194,6 +203,7 @@ public class Main {
         }
         return "Error: L'ID '" + idLlibre + "' no existeix.";
     }
+    // Funcion para eliminar el libro que quieras a base de su ID
     public static String esborrarLlibre(int idLlibre) {
         for (int i = 0; i < llibres.length(); i++) {
             JSONObject llibre = llibres.getJSONObject(i);
@@ -204,6 +214,7 @@ public class Main {
         }
         return "Error: L'ID '" + idLlibre + "' no existeix.";
     }       
+    // Funciones para validar el nombre del libro y del autor
     public static boolean validarNomLlibre(String nomLlibre) {
         if (nomLlibre == null || nomLlibre.trim().isEmpty()) {
             System.out.println("El nom del llibre no pot estar buit");
@@ -240,6 +251,7 @@ public class Main {
 
         return true;
     }
+    // Funciones para leer los nombres del libro y del autor
     public static String llegirNomLlibre(Scanner scanner) {
         System.out.print("Introdueix el nom del llibre: ");
         String nomLlibre = scanner.nextLine();
@@ -264,6 +276,7 @@ public class Main {
     
         return nomAutor; // Retornar la cadena amb els autors separats per comes
     }
+    // Funcion para añadir los libros
     public static void afegirLlibre(Scanner scanner) {
         System.out.println("=== Afegir Llibre ===");
         String nomLlibre = llegirNomLlibre(scanner);
@@ -271,6 +284,7 @@ public class Main {
         String resultat = ficarLlibreNou(0, nomLlibre, nomAutor);
         System.out.println(resultat);
     }
+    // Función mas visible para modificar el libro
     public static void modificarLlibreMenu(Scanner scanner) {
         System.out.println("=== Modificar Llibre ===");
         llistarTotsLlibres(false);
@@ -324,6 +338,7 @@ public class Main {
         String resultat = guardarLlibres("./data/llibres.json");
         System.out.println(resultat.startsWith("Error") ? resultat : "S'ha modificat correctament el llibre amb ID '" + idLlibre + "'.");
     }    
+    // Función mas visible para borrar el libro a base de su ID
     public static void esborrarLlibreMenu(Scanner scanner) {
         System.out.println("=== Esborrar Llibre ===");
         llistarTotsLlibres(false);
@@ -355,6 +370,7 @@ public class Main {
         System.out.println(resultat);
         llistarTotsLlibres(true);
     }
+    // Funciones para listar los libros (Todos, en prestamo, por autor, por busqueda)
     public static void llistarTotsLlibres(boolean pausar) {
         if (llibres.isEmpty()) {
             System.out.println("No hi ha llibres per llistar");
@@ -525,6 +541,7 @@ public class Main {
 
 
     // -------------------- Funciones Menu Préstecs --------------------------------------------------
+    // Función para validar la fecha que se introduce en el prestamo
     public static boolean dataValida(String data) {
         // Dividir la fecha en sus componentes
         String[] dataStringArray = data.split("-");
@@ -553,10 +570,12 @@ public class Main {
             return false;
         }
     }    
+    // Función para saber si un año que se introduce es bisiesto o no
     private static boolean esBisiesto(int any) {
         // Comprobar si un año es bisiesto
         return (any % 4 == 0 && (any % 100 != 0 || any % 400 == 0));
     }
+    // Funcion para añadir el prestamo y introducirlo al archivo .json
     public static void afegirPrestec() {
         String filePath = "./data/prestecs.json";
         String content = null;
@@ -694,6 +713,7 @@ public class Main {
             return;
         }
     }   
+    // Funcion para borrar los prestamos del archivo .json
     public static void esborrarPrestecs() {
         JSONArray prestecs = null;
         try {
@@ -738,6 +758,7 @@ public class Main {
             return;
         }
     }   
+    // Funcion para modificar libros que YA ESTAN de prestamo
     public static void modificarLlibrePrestecs() {
         JSONArray llibres = null;
         try {
@@ -848,7 +869,8 @@ public class Main {
             return;
         }
     }
-    public static void llistatDePrestec() { // llista normal
+    // Funciones para listar todos los prestamos (Todos, prestamos por usuario, prestamos fuera de terminio y dentro de terminio)
+    public static void llistatDePrestec() {
         JSONArray prestecs = null;
         try {
             prestecs = prestecs();
@@ -1473,6 +1495,7 @@ public class Main {
     
     
     // -------------------- Funciones creación Menus -------------------------------------------------
+    // Funciones donde estan almacenados todos los menus para mostrar despues llamando a la funcion "dibuixarLlista"
     public static ArrayList<String> menuPrincipal() {
         String menuText = """
                 Gestió de biblioteca
@@ -1548,7 +1571,7 @@ public class Main {
 
 
     // -------------------- Funciones gestionar Menus -------------------------------------------------
-    // Menú principal para la gestión de usuarios
+    // Funciones para gestionar la navegación entre menus y entre funciones de cada uno
     public static void menuUsuaris(String filePath, List<JSONObject> usuaris) {
         Scanner scanner = new Scanner(System.in);
 
@@ -1730,7 +1753,6 @@ public class Main {
         }
     }   
     public static void gestionaMenuPrestecsLlistar(Scanner scanner) {
-
         ArrayList<String> menuLlistarPrestecs = menuLlistarPrestecs();
 
         while (true) {
@@ -1805,6 +1827,7 @@ public class Main {
 
 
     public static void main(String[] args) {
+        // Llamar a la función principal y empezar la navegación
         Scanner scanner = new Scanner(System.in);
 
         gestionaMenuPrincipal(scanner);
