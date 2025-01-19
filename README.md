@@ -1,5 +1,5 @@
 # Gesti-de-biblioteca_BDR
-Treball 00, gestió de biblioteca
+##Treball 00, gestió de biblioteca
 Aquest projecte conté exercicis pràctics i els seus tests corresponents per facilitar l'aprenentatge i la validació de les solucions proposades.
 
 ## Requisits previs
